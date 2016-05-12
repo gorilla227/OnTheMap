@@ -56,6 +56,23 @@ class UdacityAPI: NSObject {
         return targetString
     }
     
+    private func createDataTaskWithRequest(request: NSURLRequest, errorDomain: String, completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) -> NSURLSessionDataTask {
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
+            if let data = self.guardResponse(errorDomain, data: data, response: response, error: error, completionHandler: completionHandler) {
+                
+                // Take care response data
+                do {
+                    let result = try self.desearializeJSONData(data) as! [String: AnyObject]
+                    completionHandler(result: result, error: nil)
+                } catch {
+                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
+                    return
+                }
+            }
+        }
+        return task
+    }
+    
     private func guardResponse(errorDomain: String, data: NSData?, response: NSURLResponse?, error: NSError?, completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) -> NSData? {
         guard error == nil else {
             completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns error: \(error?.localizedDescription)"]))
@@ -99,21 +116,9 @@ class UdacityAPI: NSObject {
         let request = generateRequest(HTTPMethodType.POST, requestMethod: Constants.Methods.POSTingSession, httpBody: httpBody)
         
         // 2. Create Task
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
-            if let data = self.guardResponse(errorDomain, data: data, response: response, error: error, completionHandler: completionHandler) {
-            
-                // 3. Take care response data
-                do {
-                    let result = try self.desearializeJSONData(data) as! [String: AnyObject]
-                    completionHandler(result: result, error: nil)
-                } catch {
-                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
-                    return
-                }
-            }
-        }
+        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
         
-        // 4. Run Task
+        // 3. Run Task
         task.resume()
     }
     
@@ -136,21 +141,9 @@ class UdacityAPI: NSObject {
         }
         
         // 2. Create Task
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
-            if let data = self.guardResponse(errorDomain, data: data, response: response, error: error, completionHandler: completionHandler) {
-                
-                // 3. Take care response data
-                do {
-                    let result = try self.desearializeJSONData(data) as! [String: AnyObject]
-                    completionHandler(result: result, error: nil)
-                } catch {
-                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
-                    return
-                }
-            }
-        }
+        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
         
-        // 4. Run Task
+        // 3. Run Task
         task.resume()
     }
     
@@ -162,21 +155,9 @@ class UdacityAPI: NSObject {
         let request = generateRequest(HTTPMethodType.GET, requestMethod: requestMethod, httpBody: nil)
         
         // 2. Create Task
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
-            if let data = self.guardResponse(errorDomain, data: data, response: response, error: error, completionHandler: completionHandler) {
-                
-                //3. Take care response data
-                do {
-                    let result = try self.desearializeJSONData(data) as! [String: AnyObject]
-                    completionHandler(result: result, error: nil)
-                } catch {
-                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
-                    return
-                }
-            }
-        }
+        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
         
-        // 4. Run Task
+        // 3. Run Task
         task.resume()
     }
     // MARK: Shared Instance
