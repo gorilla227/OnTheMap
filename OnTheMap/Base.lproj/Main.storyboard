@@ -168,7 +168,7 @@
         <!--Map-->
         <scene sceneID="PzD-LB-nsW">
             <objects>
-                <viewController title="Map" id="6sv-Dy-10R" sceneMemberID="viewController">
+                <viewController title="Map" id="6sv-Dy-10R" customClass="MapVC" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3dM-WN-jiY"/>
                         <viewControllerLayoutGuide type="bottom" id="ZCR-wz-LBz"/>
@@ -193,6 +193,9 @@
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" image="Map" id="TaG-mr-q4j"/>
+                    <connections>
+                        <outlet property="mapView" destination="iEW-dd-4ct" id="Vbr-wS-ZnM"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pdx-Xn-Lt6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

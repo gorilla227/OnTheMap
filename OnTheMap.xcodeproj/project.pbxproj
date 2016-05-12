@@ -19,6 +19,7 @@
 		B21120DC1CE3E2640072E9C5 /* UdacityConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */; };
 		B2E091471CE4F872004254AE /* MainTabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E091461CE4F872004254AE /* MainTabBarVC.swift */; };
 		B2E091491CE52E04004254AE /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E091481CE52E04004254AE /* GCDBlackBox.swift */; };
+		B2E0914B1CE53550004254AE /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E0914A1CE53550004254AE /* MapVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityConstant.swift; sourceTree = "<group>"; };
 		B2E091461CE4F872004254AE /* MainTabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarVC.swift; sourceTree = "<group>"; };
 		B2E091481CE52E04004254AE /* GCDBlackBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
+		B2E0914A1CE53550004254AE /* MapVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +152,7 @@
 			children = (
 				B21120D01CE3D03C0072E9C5 /* LoginVC.swift */,
 				B2E091461CE4F872004254AE /* MainTabBarVC.swift */,
+				B2E0914A1CE53550004254AE /* MapVC.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 				B21120DC1CE3E2640072E9C5 /* UdacityConstant.swift in Sources */,
 				B21120D11CE3D03C0072E9C5 /* LoginVC.swift in Sources */,
 				B21120D51CE3D83F0072E9C5 /* SquareTextField.swift in Sources */,
+				B2E0914B1CE53550004254AE /* MapVC.swift in Sources */,
 				B21120A31CE3B83F0072E9C5 /* AppDelegate.swift in Sources */,
 				B2E091491CE52E04004254AE /* GCDBlackBox.swift in Sources */,
 			);
