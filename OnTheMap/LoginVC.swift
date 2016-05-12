@@ -26,32 +26,45 @@ class LoginVC: UIViewController {
     
 
     @IBAction func loginButtonOnClicked(sender: AnyObject) {
+        
+        // Create Session
         udacity.createSession("gorilla.andy@gmail.com", password: "gorilla8518", completionHandler: { (result, error) in
             guard error == nil else {
-                print(error?.localizedDescription)
+                print(error?.domain, error?.localizedDescription)
                 return
             }
             
             if let sessionID = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionID] as? String {
                 self.udacity.sessionID = sessionID
-            }
-            
-            if let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String {
-                self.udacity.accountID = accountKey
+                print("Session ID: \(self.udacity.sessionID)")
             }
             
             if let expirationDate = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionExpiration] as? String {
                 
                 if let expirationDate = UdacityAPI.Constants.dateFormatter.dateFromString(expirationDate) {
                     self.udacity.expirationDate = expirationDate
+                    print("Expiration Date: \(self.udacity.expirationDate)")
                 }
             }
             
-            print("Session ID: \(self.udacity.sessionID)")
-            print("Account Key: \(self.udacity.accountID)")
-            print("Expiration Date: \(self.udacity.expirationDate)")
-            
-            self.completeLogin()
+            if let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String {
+                self.udacity.accountID = accountKey
+                print("Account Key: \(self.udacity.accountID)")
+                
+                // Get Public User Data
+                self.udacity.getPublicUserData(accountKey, completionHandler: { (result, error) in
+                    guard error == nil else {
+                        print(error?.domain, error?.localizedDescription)
+                        return
+                    }
+                    
+                    if let result = result {
+                        self.udacity.accountData = result
+                        
+                        self.completeLogin()
+                    }
+                })
+            }
         })
     }
     

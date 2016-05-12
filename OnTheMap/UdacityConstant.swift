@@ -12,7 +12,7 @@ extension UdacityAPI {
     struct Constants {
         struct Base {
             static let Scheme = "https"
-            static let Host = "udacity.com"
+            static let Host = "www.udacity.com"
         }
         struct Methods {
             static let POSTingSession = "/api/session"

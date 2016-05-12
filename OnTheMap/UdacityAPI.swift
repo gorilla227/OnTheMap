@@ -14,6 +14,7 @@ class UdacityAPI: NSObject {
     var sessionID: String?
     var accountID: String?
     var expirationDate: NSDate?
+    var accountData: [String: AnyObject]?
     
     // MARK: Private Functions
     
@@ -58,38 +59,31 @@ class UdacityAPI: NSObject {
     
     private func createDataTaskWithRequest(request: NSURLRequest, errorDomain: String, completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) -> NSURLSessionDataTask {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
-            if let data = self.guardResponse(errorDomain, data: data, response: response, error: error, completionHandler: completionHandler) {
-                
-                // Take care response data
-                do {
-                    let result = try self.desearializeJSONData(data) as! [String: AnyObject]
-                    completionHandler(result: result, error: nil)
-                } catch {
-                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
-                    return
-                }
+            guard error == nil else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns error: \(error?.localizedDescription)"]))
+                return
+            }
+            
+            guard let statusCode: Int = (response as? NSHTTPURLResponse)!.statusCode where statusCode >= 200 && statusCode < 300 else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns un-successful StatusCode"]))
+                return
+            }
+            
+            guard let data = data else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return empty data"]))
+                return
+            }
+            
+            // Take care response data
+            do {
+                let result = try self.desearializeJSONData(data) as! [String: AnyObject]
+                completionHandler(result: result, error: nil)
+            } catch {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
+                return
             }
         }
         return task
-    }
-    
-    private func guardResponse(errorDomain: String, data: NSData?, response: NSURLResponse?, error: NSError?, completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) -> NSData? {
-        guard error == nil else {
-            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns error: \(error?.localizedDescription)"]))
-            return nil
-        }
-        
-        guard let statusCode: Int = (response as? NSHTTPURLResponse)!.statusCode where statusCode >= 200 && statusCode < 300 else {
-            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns un-successful StatusCode"]))
-            return nil
-        }
-        
-        guard let data = data else {
-            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return empty data"]))
-            return nil
-        }
-        
-        return data
     }
     
     // MARK: Methods Functions
