@@ -17,6 +17,7 @@
 		B21120D51CE3D83F0072E9C5 /* SquareTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120D41CE3D83F0072E9C5 /* SquareTextField.swift */; };
 		B21120D81CE3E2260072E9C5 /* UdacityAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120D71CE3E2260072E9C5 /* UdacityAPI.swift */; };
 		B21120DC1CE3E2640072E9C5 /* UdacityConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */; };
+		B2E091471CE4F872004254AE /* MainTabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E091461CE4F872004254AE /* MainTabBarVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		B21120D41CE3D83F0072E9C5 /* SquareTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SquareTextField.swift; path = CustomizeUI/SquareTextField.swift; sourceTree = "<group>"; };
 		B21120D71CE3E2260072E9C5 /* UdacityAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityAPI.swift; sourceTree = "<group>"; };
 		B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityConstant.swift; sourceTree = "<group>"; };
+		B2E091461CE4F872004254AE /* MainTabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				B21120D01CE3D03C0072E9C5 /* LoginVC.swift */,
+				B2E091461CE4F872004254AE /* MainTabBarVC.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -306,6 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B21120D81CE3E2260072E9C5 /* UdacityAPI.swift in Sources */,
+				B2E091471CE4F872004254AE /* MainTabBarVC.swift in Sources */,
 				B21120DC1CE3E2640072E9C5 /* UdacityConstant.swift in Sources */,
 				B21120D11CE3D03C0072E9C5 /* LoginVC.swift in Sources */,
 				B21120D51CE3D83F0072E9C5 /* SquareTextField.swift in Sources */,
@@ -536,6 +540,7 @@
 				B21120C91CE3B83F0072E9C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B21120CA1CE3B83F0072E9C5 /* Build configuration list for PBXNativeTarget "OnTheMapTests" */ = {
 			isa = XCConfigurationList;
@@ -544,6 +549,7 @@
 				B21120CC1CE3B83F0072E9C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B21120CD1CE3B83F0072E9C5 /* Build configuration list for PBXNativeTarget "OnTheMapUITests" */ = {
 			isa = XCConfigurationList;
@@ -552,6 +558,7 @@
 				B21120CF1CE3B83F0072E9C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

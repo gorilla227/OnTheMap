@@ -9,18 +9,25 @@
 import Foundation
 
 class UdacityAPI: NSObject {
+    // MARK: Variables
+    
+    var sessionID: String?
+    var accountID: String?
+    var expirationDate: NSDate?
+    
     // MARK: Private Functions
-    private func desearializeJSONData(data: NSData, completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) {
+    
+    private func desearializeJSONData(data: NSData) throws -> AnyObject? {
         let prepareData: NSData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
         do {
-            let result = try NSJSONSerialization.JSONObjectWithData(prepareData, options: .AllowFragments) as! [String: AnyObject]
-            completionHandler(result: result, error: nil)
+            let result = try NSJSONSerialization.JSONObjectWithData(prepareData, options: .AllowFragments)
+            return result
         } catch {
-            completionHandler(result: nil, error: NSError(domain: "createSession", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
+            throw error
         }
     }
     
-    private func generateRequest(httpMethod: HTTPMethodType, requestMethod: String, httpBody: NSData?) -> NSURLRequest {
+    private func generateRequest(httpMethod: HTTPMethodType, requestMethod: String, httpBody: NSData?) -> NSMutableURLRequest {
         let urlComponents = NSURLComponents()
         urlComponents.scheme = Constants.Base.Scheme
         urlComponents.host = Constants.Base.Host
@@ -32,15 +39,47 @@ class UdacityAPI: NSObject {
         case .POST:
             request.addValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.HTTPBody = httpBody
+            if let httpBody = httpBody {
+                request.HTTPBody = httpBody
+            }
         default:
             break
         }
         return request
     }
     
+    private func replacPlaceholder(sourceString: String, replacements: [String: String]) -> String {
+        var targetString = String(sourceString)
+        for (replacementKey, replacementValue) in replacements {
+            targetString = targetString.stringByReplacingOccurrencesOfString("{\(replacementKey)}", withString: replacementValue)
+        }
+        return targetString
+    }
+    
+    private func guardResponse(errorDomain: String, data: NSData?, response: NSURLResponse?, error: NSError?, completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) -> NSData? {
+        guard error == nil else {
+            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns error: \(error?.localizedDescription)"]))
+            return nil
+        }
+        
+        guard let statusCode: Int = (response as? NSHTTPURLResponse)!.statusCode where statusCode >= 200 && statusCode < 300 else {
+            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns un-successful StatusCode"]))
+            return nil
+        }
+        
+        guard let data = data else {
+            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return empty data"]))
+            return nil
+        }
+        
+        return data
+    }
+    
     // MARK: Methods Functions
+    
     func createSession(username: String, password: String, completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) {
+        let errorDomain = "createSession"
+        
         // 1. Create Request
         let parameters = [
             Constants.ParameterKeys.Udacity: [
@@ -53,7 +92,7 @@ class UdacityAPI: NSObject {
         do {
             httpBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: .PrettyPrinted)
         } catch {
-            completionHandler(result: nil, error: NSError(domain: "createSession", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
+            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
             return
         }
         
@@ -61,28 +100,85 @@ class UdacityAPI: NSObject {
         
         // 2. Create Task
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
-            guard error == nil else {
-                completionHandler(result: nil, error: NSError(domain: "createSession", code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns error: \(error?.localizedDescription)"]))
-                return
-            }
+            if let data = self.guardResponse(errorDomain, data: data, response: response, error: error, completionHandler: completionHandler) {
             
-            guard let statusCode: Int = (response as? NSHTTPURLResponse)!.statusCode where statusCode >= 200 && statusCode < 300 else {
-                completionHandler(result: nil, error: NSError(domain: "createSession", code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns un-successful StatusCode"]))
-                return
+                // 3. Take care response data
+                do {
+                    let result = try self.desearializeJSONData(data) as! [String: AnyObject]
+                    completionHandler(result: result, error: nil)
+                } catch {
+                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
+                    return
+                }
             }
-            
-            guard let data = data else {
-                completionHandler(result: nil, error: NSError(domain: "createSession", code: 1, userInfo: [NSLocalizedDescriptionKey: "Return empty data"]))
-                return
-            }
-            
-            self.desearializeJSONData(data, completionHandler: completionHandler)
         }
         
-        // 3. Run Task
+        // 4. Run Task
         task.resume()
     }
     
+    func deleteSession(completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) {
+        let errorDomain = "deleteSession"
+        
+        // 1. Create Request
+        let request = generateRequest(HTTPMethodType.DELETE, requestMethod: Constants.Methods.DELETEingSession, httpBody: nil) 
+        var xsrfCookie: NSHTTPCookie? = nil
+        let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        for cookie in sharedCookieStorage.cookies! {
+            if cookie.name == "XSRF-TOKEN" {
+                xsrfCookie = cookie
+                break
+            }
+        }
+        
+        if let xsrfCookie = xsrfCookie {
+            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
+        }
+        
+        // 2. Create Task
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
+            if let data = self.guardResponse(errorDomain, data: data, response: response, error: error, completionHandler: completionHandler) {
+                
+                // 3. Take care response data
+                do {
+                    let result = try self.desearializeJSONData(data) as! [String: AnyObject]
+                    completionHandler(result: result, error: nil)
+                } catch {
+                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
+                    return
+                }
+            }
+        }
+        
+        // 4. Run Task
+        task.resume()
+    }
+    
+    func getPublicUserData(userID: String, completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) {
+        let errorDomain = "getPublicUserData"
+        
+        // 1. Create Request
+        let requestMethod = replacPlaceholder(Constants.Methods.GETingPublicUserData, replacements: [Constants.ReplacementKeys.UserID: userID])
+        let request = generateRequest(HTTPMethodType.GET, requestMethod: requestMethod, httpBody: nil)
+        
+        // 2. Create Task
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
+            if let data = self.guardResponse(errorDomain, data: data, response: response, error: error, completionHandler: completionHandler) {
+                
+                //3. Take care response data
+                do {
+                    let result = try self.desearializeJSONData(data) as! [String: AnyObject]
+                    completionHandler(result: result, error: nil)
+                } catch {
+                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
+                    return
+                }
+            }
+        }
+        
+        // 4. Run Task
+        task.resume()
+    }
     // MARK: Shared Instance
     
     class func sharedInstance() -> UdacityAPI {

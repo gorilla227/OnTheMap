@@ -12,13 +12,16 @@ class LoginVC: UIViewController {
     @IBOutlet weak var emailTextField: SquareTextField!
     @IBOutlet weak var passwordTextField: SquareTextField!
     
-    let udacity = UdacityAPI()
+    let udacity = UdacityAPI.sharedInstance()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        
+    }
+    
+    func completeLogin() {
+        performSegueWithIdentifier("CompleteLogin", sender: self)
     }
     
 
@@ -29,12 +32,33 @@ class LoginVC: UIViewController {
                 return
             }
             
-            print((result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionID])
+            if let sessionID = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionID] as? String {
+                self.udacity.sessionID = sessionID
+            }
+            
+            if let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String {
+                self.udacity.accountID = accountKey
+            }
+            
+            if let expirationDate = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionExpiration] as? String {
+                
+                if let expirationDate = UdacityAPI.Constants.dateFormatter.dateFromString(expirationDate) {
+                    self.udacity.expirationDate = expirationDate
+                }
+            }
+            
+            print("Session ID: \(self.udacity.sessionID)")
+            print("Account Key: \(self.udacity.accountID)")
+            print("Expiration Date: \(self.udacity.expirationDate)")
+            
+            self.completeLogin()
         })
     }
     
     @IBAction func signUpButtonOnClicked(sender: AnyObject) {
+        
     }
+    
     /*
     // MARK: - Navigation
 
