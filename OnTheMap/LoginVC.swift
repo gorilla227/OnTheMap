@@ -11,6 +11,10 @@ import UIKit
 class LoginVC: UIViewController {
     @IBOutlet weak var emailTextField: SquareTextField!
     @IBOutlet weak var passwordTextField: SquareTextField!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var signUpButton: UIButton!
+    @IBOutlet weak var facebookLoginButton: UIButton!
     
     let udacity = UdacityAPI.sharedInstance()
     
@@ -24,11 +28,24 @@ class LoginVC: UIViewController {
         performSegueWithIdentifier("CompleteLogin", sender: self)
     }
     
+    func setEnableUI(enable: Bool) {
+        emailTextField.enabled = enable
+        passwordTextField.enabled = enable
+        loginButton.enabled = enable
+        signUpButton.enabled = enable
+        facebookLoginButton.enabled = enable
+    }
 
     @IBAction func loginButtonOnClicked(sender: AnyObject) {
+        setEnableUI(false)
+        activityIndicator.startAnimating()
         
         // Create Session
         udacity.createSession("gorilla.andy@gmail.com", password: "gorilla8518", completionHandler: { (result, error) in
+            performUIUpdatesOnMain({ 
+                self.activityIndicator.stopAnimating()
+            })
+            
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
                 return
@@ -50,9 +67,16 @@ class LoginVC: UIViewController {
             if let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String {
                 self.udacity.accountID = accountKey
                 print("Account Key: \(self.udacity.accountID)")
+                performUIUpdatesOnMain({
+                    self.activityIndicator.startAnimating()
+                })
                 
                 // Get Public User Data
                 self.udacity.getPublicUserData(accountKey, completionHandler: { (result, error) in
+                    performUIUpdatesOnMain({
+                        self.activityIndicator.stopAnimating()
+                    })
+                    
                     guard error == nil else {
                         print(error?.domain, error?.localizedDescription)
                         return

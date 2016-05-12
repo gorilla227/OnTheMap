@@ -30,6 +30,9 @@ class MainTabBarVC: UITabBarController {
                 self.udacity.sessionID = nil
                 self.udacity.expirationDate = nil
                 self.udacity.accountID = nil
+                self.udacity.accountData = nil
+                
+                self.dismissViewControllerAnimated(true, completion: nil)
             }
         }
     }

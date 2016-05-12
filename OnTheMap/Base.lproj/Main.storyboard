@@ -137,18 +137,27 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="bWY-gr-U83">
+                                <rect key="frame" x="282" y="281" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="zA4-pZ-9p4" secondAttribute="trailing" id="3cd-vE-j5w"/>
+                            <constraint firstItem="bWY-gr-U83" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="9Av-CQ-imU"/>
                             <constraint firstItem="zA4-pZ-9p4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="IBu-vT-bbU"/>
+                            <constraint firstItem="bWY-gr-U83" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Q86-iV-Fbr"/>
                             <constraint firstItem="zA4-pZ-9p4" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="R7n-cX-vJB"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="zA4-pZ-9p4" secondAttribute="bottom" constant="20" id="YCU-f8-d4y"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="bWY-gr-U83" id="QwJ-nU-81Z"/>
                         <outlet property="emailTextField" destination="2zx-93-Z7A" id="v6B-rh-y7f"/>
+                        <outlet property="facebookLoginButton" destination="09o-3m-Pcf" id="CHO-al-Gx6"/>
+                        <outlet property="loginButton" destination="S42-2c-41c" id="s5D-gj-12Q"/>
                         <outlet property="passwordTextField" destination="ti4-dN-Q0K" id="nfV-8O-evB"/>
+                        <outlet property="signUpButton" destination="8Xe-pL-G5B" id="yOZ-Rq-KMK"/>
                         <segue destination="AGd-ko-90s" kind="presentation" identifier="CompleteLogin" modalTransitionStyle="crossDissolve" id="MKn-a3-gav"/>
                     </connections>
                 </viewController>
@@ -167,7 +176,21 @@
                     <view key="view" contentMode="scaleToFill" id="Kuc-lh-lEf">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="iEW-dd-4ct">
+                                <rect key="frame" x="0.0" y="64" width="600" height="487"/>
+                                <connections>
+                                    <outlet property="delegate" destination="6sv-Dy-10R" id="Epw-bq-qwu"/>
+                                </connections>
+                            </mapView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="ZCR-wz-LBz" firstAttribute="top" secondItem="iEW-dd-4ct" secondAttribute="bottom" id="8fz-6Z-zr3"/>
+                            <constraint firstItem="iEW-dd-4ct" firstAttribute="top" secondItem="3dM-WN-jiY" secondAttribute="bottom" id="HEq-sx-5Je"/>
+                            <constraint firstItem="iEW-dd-4ct" firstAttribute="leading" secondItem="Kuc-lh-lEf" secondAttribute="leadingMargin" constant="-20" id="UFu-I6-0LJ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="iEW-dd-4ct" secondAttribute="trailing" constant="-20" id="XW7-Zk-CLa"/>
+                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" image="Map" id="TaG-mr-q4j"/>
                 </viewController>
