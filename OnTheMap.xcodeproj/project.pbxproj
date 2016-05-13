@@ -18,6 +18,7 @@
 		B21120D81CE3E2260072E9C5 /* UdacityAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120D71CE3E2260072E9C5 /* UdacityAPI.swift */; };
 		B21120DC1CE3E2640072E9C5 /* UdacityConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */; };
 		B2B0CB4A1CE646E8005EA3AB /* StudentLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B0CB491CE646E8005EA3AB /* StudentLocation.swift */; };
+		B2B0CB4C1CE65FB2005EA3AB /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B0CB4B1CE65FB2005EA3AB /* MapPin.swift */; };
 		B2E091471CE4F872004254AE /* MainTabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E091461CE4F872004254AE /* MainTabBarVC.swift */; };
 		B2E091491CE52E04004254AE /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E091481CE52E04004254AE /* GCDBlackBox.swift */; };
 		B2E0914B1CE53550004254AE /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E0914A1CE53550004254AE /* MapVC.swift */; };
@@ -60,6 +61,7 @@
 		B21120D71CE3E2260072E9C5 /* UdacityAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityAPI.swift; sourceTree = "<group>"; };
 		B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityConstant.swift; sourceTree = "<group>"; };
 		B2B0CB491CE646E8005EA3AB /* StudentLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentLocation.swift; sourceTree = "<group>"; };
+		B2B0CB4B1CE65FB2005EA3AB /* MapPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
 		B2E091461CE4F872004254AE /* MainTabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarVC.swift; sourceTree = "<group>"; };
 		B2E091481CE52E04004254AE /* GCDBlackBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 		B2E0914A1CE53550004254AE /* MapVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 			children = (
 				B21120D01CE3D03C0072E9C5 /* LoginVC.swift */,
 				B2E091461CE4F872004254AE /* MainTabBarVC.swift */,
+				B2B0CB4B1CE65FB2005EA3AB /* MapPin.swift */,
 				B2E0914A1CE53550004254AE /* MapVC.swift */,
 			);
 			name = ViewControllers;
@@ -331,6 +334,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2B0CB4C1CE65FB2005EA3AB /* MapPin.swift in Sources */,
 				B21120D81CE3E2260072E9C5 /* UdacityAPI.swift in Sources */,
 				B2B0CB4A1CE646E8005EA3AB /* StudentLocation.swift in Sources */,
 				B2E091471CE4F872004254AE /* MainTabBarVC.swift in Sources */,

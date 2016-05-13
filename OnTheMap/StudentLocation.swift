@@ -13,11 +13,11 @@ struct StudentLocation {
     // MARK: Properties
     let objectID: String
     let uniqueKey: String?
-    let firstName: String?
-    let lastName: String?
+    let firstName: String
+    let lastName: String
     let mapString: String?
     let mediaURL: String?
-    let location: CLLocation?
+    let location: CLLocation
     let createdAt: NSDate
     let updatedAt: NSDate?
     let acl: AnyObject?
@@ -32,15 +32,12 @@ struct StudentLocation {
     init(dictionary: [String: AnyObject]) {
         objectID = dictionary[ObjectKeys.ObjectID] as! String
         uniqueKey = dictionary[ObjectKeys.UniqueKey] as? String
-        firstName = dictionary[ObjectKeys.FirstName] as? String
-        lastName = dictionary[ObjectKeys.LastName] as? String
+        firstName = dictionary[ObjectKeys.FirstName] as! String
+        lastName = dictionary[ObjectKeys.LastName] as! String
         mapString = dictionary[ObjectKeys.MapString] as? String
         mediaURL = dictionary[ObjectKeys.MediaURL] as? String
-        if let latitute = dictionary[ObjectKeys.Latitude] as? Double, let longitude = dictionary[ObjectKeys.Longitude] as? Double {
-            location = CLLocation(latitude: latitute, longitude: longitude)
-        } else {
-            location = nil
-        }
+        location = CLLocation(latitude: dictionary[ObjectKeys.Latitude] as! Double, longitude: dictionary[ObjectKeys.Longitude] as! Double)
+        
         createdAt = dateFormatter.dateFromString(dictionary[ObjectKeys.CreateAt] as! String)!
         if let updateDate = dateFormatter.dateFromString(dictionary[ObjectKeys.UpdatedAt] as! String) {
             updatedAt = updateDate

@@ -12,19 +12,23 @@ import MapKit
 
 class MapVC: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
+    
+    let udacity = UdacityAPI.sharedInstance()
+    let parse = ParseAPI.sharedInstance()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
     }
     
-
+    func loadMapPin() {
+        for studentLocation in parse.studentLocations! {
+            mapView.addAnnotation(MapPin(rawData: studentLocation))
+        }
+    }
+    
     /*
     // MARK: - Navigation
 

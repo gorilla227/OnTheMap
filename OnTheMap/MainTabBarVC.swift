@@ -22,7 +22,15 @@ class MainTabBarVC: UITabBarController {
                 print(error?.domain, error?.localizedDescription)
                 return
             }
-            print(result)
+            
+            self.parse.studentLocations = result
+            performUIUpdatesOnMain({ 
+                for viewController in self.viewControllers! {
+                    if let mapVC = viewController as? MapVC where viewController.isKindOfClass(MapVC) {
+                        mapVC.loadMapPin()
+                    }
+                }
+            })
         }
     }
 

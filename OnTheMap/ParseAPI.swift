@@ -10,6 +10,9 @@ import Foundation
 
 class ParseAPI: NSObject {
     
+    // MARK: Properties
+    var studentLocations: [StudentLocation]?
+    
     // MARK: Private Functions
     
     private func desearializeJSONData(data: NSData) throws -> AnyObject? {
