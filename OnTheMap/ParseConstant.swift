@@ -34,20 +34,6 @@ extension ParseAPI {
             static let ObjectID = "objectId"
         }
         
-        struct ObjectKeys {
-            static let ObjectID = "objectId"
-            static let UniqueKey = "uniqueKey"
-            static let FirstName = "firstName"
-            static let LastName = "lastName"
-            static let MapString = "mapString"
-            static let MediaURL = "mediaURL"
-            static let Latitude = "latitude"
-            static let Longitude = "longitude"
-            static let CreateAt = "createAt"
-            static let UpdatedAt = "updatedAt"
-            static let ACL = "ACL"
-        }
-        
         struct ResponseKeys {
             static let Results = "results"
         }

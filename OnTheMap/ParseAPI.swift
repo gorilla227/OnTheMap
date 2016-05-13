@@ -21,11 +21,19 @@ class ParseAPI: NSObject {
         }
     }
     
-    private func generateRequest(httpMethod: HTTPMethodType, requestMethod: String, httpBody: NSData?) -> NSMutableURLRequest {
+    private func generateRequest(httpMethod: HTTPMethodType, requestMethod: String, parameters: [String: AnyObject]?, httpBody: NSData?) -> NSMutableURLRequest {
         let urlComponents = NSURLComponents()
         urlComponents.scheme = Constants.Base.Scheme
         urlComponents.host = Constants.Base.Host
         urlComponents.path = requestMethod
+        
+        if let parameters = parameters {
+            urlComponents.queryItems = [NSURLQueryItem]()
+            for (key, value) in parameters {
+                let queryItem = NSURLQueryItem(name: key, value: String(value).stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()))
+                urlComponents.queryItems?.append(queryItem)
+            }
+        }
         
         let request = NSMutableURLRequest(URL: urlComponents.URL!)
         request.HTTPMethod = httpMethod.rawValue
@@ -42,6 +50,7 @@ class ParseAPI: NSObject {
         default:
             break
         }
+        
         return request
     }
     
@@ -72,7 +81,7 @@ class ParseAPI: NSObject {
             
             // Take care response data
             do {
-                let result = try self.desearializeJSONData(data) as! [String: AnyObject]
+                let result = try self.desearializeJSONData(data)
                 completionHandler(result: result, error: nil)
             } catch {
                 completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to deserialize JSON response"]))
@@ -84,14 +93,31 @@ class ParseAPI: NSObject {
     
     // MARK: Methods Functions
     
-    func getStudentLocations(parameters: [String: AnyObject]?, completionHandler: (result: AnyObject?, error: NSError?) -> Void) {
+    func getStudentLocations(parameters: [String: AnyObject]?, completionHandler: (result: [StudentLocation]?, error: NSError?) -> Void) {
         let errorDomain = "getStudentLocations"
         
         // 1. Create Request
-        let request = generateRequest(HTTPMethodType.GET, requestMethod: Constants.Methods.GETingStudentLocations, httpBody: nil)
+        let request = generateRequest(HTTPMethodType.GET, requestMethod: Constants.Methods.GETingStudentLocations, parameters: nil, httpBody: nil)
         
         // 2. Create Task
-        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
+        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain) {(result: AnyObject?, error: NSError?) in
+            guard error == nil else {
+                completionHandler(result: nil, error: error)
+                return
+            }
+            
+            guard let results = (result as? [String: AnyObject])![Constants.ResponseKeys.Results] as? [[String: AnyObject]] else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return incorrect JSON structure"]))
+                return
+            }
+            
+            var studentLocations = [StudentLocation]()
+            for locationDictionary in results {
+                let studentLocation = StudentLocation(dictionary: locationDictionary)
+                studentLocations.append(studentLocation)
+            }
+            completionHandler(result: studentLocations, error: nil)
+        }
         
         //3. Run Task
         task.resume()

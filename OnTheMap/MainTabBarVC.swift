@@ -11,17 +11,25 @@ import UIKit
 class MainTabBarVC: UITabBarController {
 
     let udacity = UdacityAPI.sharedInstance()
+    let parse = ParseAPI.sharedInstance()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        parse.getStudentLocations(nil) { (result, error) in
+            guard error == nil else {
+                print(error?.domain, error?.localizedDescription)
+                return
+            }
+            print(result)
+        }
     }
 
     @IBAction func logoutButtonOnClicked(sender: AnyObject) {
         udacity.deleteSession { (result, error) in
             guard error == nil else {
-                print(error?.localizedDescription)
+                print(error?.domain, error?.localizedDescription)
                 return
             }
             
