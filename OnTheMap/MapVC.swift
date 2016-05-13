@@ -25,7 +25,9 @@ class MapVC: UIViewController {
     
     func loadMapPin() {
         for studentLocation in parse.studentLocations! {
-            mapView.addAnnotation(MapPin(rawData: studentLocation))
+            performUIUpdatesOnMain({ 
+                self.mapView.addAnnotation(MapPin(rawData: studentLocation))
+            })
         }
     }
     

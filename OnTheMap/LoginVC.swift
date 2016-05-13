@@ -73,12 +73,12 @@ class LoginVC: UIViewController {
                 
                 // Get Public User Data
                 self.udacity.getPublicUserData(accountKey, completionHandler: { (result, error) in
-                    performUIUpdatesOnMain({
-                        self.activityIndicator.stopAnimating()
-                    })
                     
                     guard error == nil else {
                         print(error?.domain, error?.localizedDescription)
+                        performUIUpdatesOnMain({
+                            self.activityIndicator.stopAnimating()
+                        })
                         return
                     }
                     
@@ -87,6 +87,9 @@ class LoginVC: UIViewController {
                         
                         self.completeLogin()
                     }
+                    performUIUpdatesOnMain({
+                        self.activityIndicator.stopAnimating()
+                    })
                 })
             }
         })

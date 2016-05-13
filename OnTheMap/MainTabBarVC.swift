@@ -12,6 +12,7 @@ class MainTabBarVC: UITabBarController {
 
     let udacity = UdacityAPI.sharedInstance()
     let parse = ParseAPI.sharedInstance()
+    var myPin: MapPin?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,13 +25,30 @@ class MainTabBarVC: UITabBarController {
             }
             
             self.parse.studentLocations = result
-            performUIUpdatesOnMain({ 
-                for viewController in self.viewControllers! {
-                    if let mapVC = viewController as? MapVC where viewController.isKindOfClass(MapVC) {
-                        mapVC.loadMapPin()
-                    }
+            print(result?.count)
+            self.initializeMyPin()
+            
+            self.loadMapPinsForSubViewControllers()
+        }
+    }
+    
+    private func initializeMyPin() {
+        myPin = nil
+        if let studentLocations = parse.studentLocations {
+            for studentLocation in studentLocations {
+                if let uniqueKey = studentLocation.uniqueKey where uniqueKey == self.udacity.accountID {
+                    self.myPin = MapPin(rawData: studentLocation)
+                    break
                 }
-            })
+            }
+        }
+    }
+    
+    private func loadMapPinsForSubViewControllers() {
+        for viewController in self.viewControllers! {
+            if let mapVC = viewController as? MapVC where viewController.isKindOfClass(MapVC) {
+                mapVC.loadMapPin()
+            }
         }
     }
 
