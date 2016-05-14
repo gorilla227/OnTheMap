@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 import MapKit
 
-class MapVC: UIViewController {
+class MapVC: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     
     let udacity = UdacityAPI.sharedInstance()
@@ -23,11 +23,42 @@ class MapVC: UIViewController {
         
     }
     
+//    func cleanMapPins() {
+//        mapView.removeAnnotations(mapView.annotations)
+//    }
+    
     func loadMapPin() {
+        // Add new return annotations
         for studentLocation in parse.studentLocations! {
-            performUIUpdatesOnMain({ 
-                self.mapView.addAnnotation(MapPin(rawData: studentLocation))
+            performUIUpdatesOnMain({
+                let annotation = MapPin(rawData: studentLocation)
+                self.mapView.addAnnotation(annotation)
             })
+        }
+    }
+    
+    // MARK: MKMapViewDelegate Protocol
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        let Identifier = "MapPin"
+        if let annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(Identifier) {
+            annotationView.annotation = annotation
+            return annotationView
+        } else {
+            let annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: Identifier)
+            annotationView.canShowCallout = true
+            annotationView.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
+            return annotationView
+        }
+    }
+    
+    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if var mediaURLString = view.annotation?.subtitle {
+            if !(mediaURLString?.hasPrefix("http"))! {
+                mediaURLString = "http://" + mediaURLString!
+            }
+            if let mediaURL = NSURL(string: mediaURLString!) {
+                UIApplication.sharedApplication().openURL(mediaURL)
+            }
         }
     }
     

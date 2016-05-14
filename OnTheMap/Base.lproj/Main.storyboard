@@ -180,7 +180,7 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="iEW-dd-4ct">
                                 <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                                 <connections>
-                                    <outlet property="delegate" destination="6sv-Dy-10R" id="Epw-bq-qwu"/>
+                                    <outlet property="delegate" destination="6sv-Dy-10R" id="raS-sF-Osh"/>
                                 </connections>
                             </mapView>
                         </subviews>
@@ -212,8 +212,16 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem systemItem="refresh" id="PQS-Hp-P9W"/>
-                            <barButtonItem image="Pin" id="EVy-dR-95a"/>
+                            <barButtonItem systemItem="refresh" id="PQS-Hp-P9W">
+                                <connections>
+                                    <action selector="refreshMapPinsButtonOnClicked:" destination="VrB-0d-1Qc" id="vfc-GR-rFL"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem image="Pin" id="EVy-dR-95a">
+                                <connections>
+                                    <action selector="myPinButtonOnClicked:" destination="VrB-0d-1Qc" id="jRD-9e-aRn"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="hra-hw-SfP">

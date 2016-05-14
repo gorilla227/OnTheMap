@@ -35,16 +35,34 @@ class LoginVC: UIViewController {
         signUpButton.enabled = enable
         facebookLoginButton.enabled = enable
     }
+    
+    private func stopInteraction(shouldStop: Bool, runInBackground: Bool) {
+        func action(shouldStop: Bool) {
+            if shouldStop {
+                self.setEnableUI(false)
+                self.activityIndicator.startAnimating()
+            } else {
+                self.setEnableUI(true)
+                self.activityIndicator.stopAnimating()
+            }
+        }
+        
+        
+        if runInBackground {
+            performUIUpdatesOnMain {
+                action(shouldStop)
+            }
+        } else {
+            action(shouldStop)
+        }
+    }
 
     @IBAction func loginButtonOnClicked(sender: AnyObject) {
-        setEnableUI(false)
-        activityIndicator.startAnimating()
+        stopInteraction(true, runInBackground: false)
         
         // Create Session
         udacity.createSession("gorilla.andy@gmail.com", password: "gorilla8518", completionHandler: { (result, error) in
-            performUIUpdatesOnMain({ 
-                self.activityIndicator.stopAnimating()
-            })
+            self.stopInteraction(false, runInBackground: true)
             
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
@@ -67,18 +85,15 @@ class LoginVC: UIViewController {
             if let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String {
                 self.udacity.accountID = accountKey
                 print("Account Key: \(self.udacity.accountID)")
-                performUIUpdatesOnMain({
-                    self.activityIndicator.startAnimating()
-                })
+                self.stopInteraction(true, runInBackground: false)
                 
                 // Get Public User Data
                 self.udacity.getPublicUserData(accountKey, completionHandler: { (result, error) in
                     
                     guard error == nil else {
                         print(error?.domain, error?.localizedDescription)
-                        performUIUpdatesOnMain({
-                            self.activityIndicator.stopAnimating()
-                        })
+                        self.stopInteraction(false, runInBackground: true)
+                        
                         return
                     }
                     
@@ -87,9 +102,7 @@ class LoginVC: UIViewController {
                         
                         self.completeLogin()
                     }
-                    performUIUpdatesOnMain({
-                        self.activityIndicator.stopAnimating()
-                    })
+                    self.stopInteraction(false, runInBackground: true)
                 })
             }
         })
