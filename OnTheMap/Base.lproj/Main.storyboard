@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
@@ -304,6 +305,9 @@ today?</string>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                 <state key="normal" title="Find on the Map"/>
+                                                <connections>
+                                                    <segue destination="wYQ-3P-7bp" kind="show" identifier="FindLocationAndAddLink" id="vil-v6-Msv"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -339,6 +343,83 @@ today?</string>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J6n-NC-JKg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="909" y="-826"/>
+        </scene>
+        <!--Add My LinkVC-->
+        <scene sceneID="j0s-Qd-c3O">
+            <objects>
+                <viewController id="wYQ-3P-7bp" customClass="AddMyLinkVC" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="rFR-lf-5Eb"/>
+                        <viewControllerLayoutGuide type="bottom" id="PeH-wf-uvj"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ObA-hB-iEb">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter a Link to Share Here" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZG2-0p-VOK">
+                                <rect key="frame" x="0.0" y="20" width="600" height="200"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" zoomEnabled="NO" scrollEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nfr-Yn-6Ip">
+                                <rect key="frame" x="0.0" y="220" width="600" height="380"/>
+                            </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Ky-5s-wVb" customClass="RoundButton" customModule="OnTheMap" customModuleProvider="target">
+                                <rect key="frame" x="200" y="493" width="200" height="40"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="4Ky-5s-wVb" secondAttribute="height" multiplier="5" id="jcb-ba-nzs"/>
+                                </constraints>
+                                <state key="normal" title="Submit"/>
+                                <connections>
+                                    <action selector="sumbitButtonOnClicked:" destination="wYQ-3P-7bp" eventType="touchUpInside" id="t2O-tp-aEA"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="PeH-wf-uvj" firstAttribute="top" secondItem="4Ky-5s-wVb" secondAttribute="bottom" constant="66" id="4v0-7c-KLH"/>
+                            <constraint firstItem="PeH-wf-uvj" firstAttribute="top" secondItem="nfr-Yn-6Ip" secondAttribute="bottom" id="7Kc-jg-VEj"/>
+                            <constraint firstItem="nfr-Yn-6Ip" firstAttribute="height" secondItem="ObA-hB-iEb" secondAttribute="height" multiplier="2:3" id="ADd-Pm-wTG"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="ZG2-0p-VOK" secondAttribute="leading" constant="20" id="TRD-4L-TQm"/>
+                            <constraint firstItem="4Ky-5s-wVb" firstAttribute="centerX" secondItem="ObA-hB-iEb" secondAttribute="centerX" id="ZMo-lQ-p96"/>
+                            <constraint firstItem="ZG2-0p-VOK" firstAttribute="top" secondItem="rFR-lf-5Eb" secondAttribute="bottom" constant="-44" id="Zi3-lh-MOl"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ZG2-0p-VOK" secondAttribute="trailing" constant="-20" id="Zy6-j7-7lY"/>
+                            <constraint firstItem="4Ky-5s-wVb" firstAttribute="centerY" secondItem="nfr-Yn-6Ip" secondAttribute="centerY" multiplier="5:4" id="c3s-ak-cC1"/>
+                            <constraint firstItem="nfr-Yn-6Ip" firstAttribute="leading" secondItem="ObA-hB-iEb" secondAttribute="leadingMargin" constant="-20" id="eGu-mD-8tJ"/>
+                            <constraint firstItem="nfr-Yn-6Ip" firstAttribute="top" secondItem="ZG2-0p-VOK" secondAttribute="bottom" id="gE8-j1-xNd"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="nfr-Yn-6Ip" secondAttribute="trailing" constant="-20" id="iTL-u3-sy8"/>
+                            <constraint firstItem="ZG2-0p-VOK" firstAttribute="height" secondItem="ObA-hB-iEb" secondAttribute="height" multiplier="1:3" id="mrV-0q-eXv"/>
+                            <constraint firstItem="PeH-wf-uvj" firstAttribute="top" secondItem="nfr-Yn-6Ip" secondAttribute="bottom" id="s6L-je-n9a"/>
+                            <constraint firstItem="4Ky-5s-wVb" firstAttribute="width" secondItem="ObA-hB-iEb" secondAttribute="width" multiplier="1:3" id="vvy-F9-OI2"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="ADd-Pm-wTG"/>
+                                <exclude reference="4v0-7c-KLH"/>
+                                <exclude reference="7Kc-jg-VEj"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="QOa-O7-mcY">
+                        <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="d6I-Sj-csI">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="cancelButtonOnClicked:" destination="wYQ-3P-7bp" id="Tx5-oT-d7J"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="linkTextField" destination="ZG2-0p-VOK" id="NIW-J6-aO8"/>
+                        <outlet property="mapView" destination="nfr-Yn-6Ip" id="ptZ-1k-w1x"/>
+                        <outlet property="submitButton" destination="4Ky-5s-wVb" id="5IO-Dy-tz1"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xSO-L5-ocj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1695" y="-826"/>
         </scene>
         <!--On The Map-->
         <scene sceneID="Jz7-KX-LiK">

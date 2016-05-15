@@ -17,8 +17,7 @@ class AddMyPinVC: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        
-        
+
     }
     
     // MARK: Keyboard adjustment
@@ -52,17 +51,22 @@ class AddMyPinVC: UIViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
-    /*
-    // MARK: - Navigation
+    
+    // MARK: IBActions
+    @IBAction func cancelButtonOnClicked(sender: AnyObject) {
+        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+    }
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-    }
-    */
-    @IBAction func cancelButtonOnClicked(sender: AnyObject) {
-        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+        if segue.identifier == "FindLocationAndAddLink" {
+            if let destVC = segue.destinationViewController as? AddMyLinkVC {
+                destVC.locationString = locationTextField.text
+            }
+            
+        }
     }
 
 }

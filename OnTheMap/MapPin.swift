@@ -11,7 +11,7 @@ import CoreLocation
 import MapKit
 
 class MapPin: NSObject, MKAnnotation {
-    let studentLocation: StudentLocation
+    let studentLocation: StudentLocation?
     var coordinate: CLLocationCoordinate2D
     var title: String?
     var subtitle: String?
@@ -21,5 +21,12 @@ class MapPin: NSObject, MKAnnotation {
         coordinate = rawData.location.coordinate
         title = rawData.firstName + rawData.lastName
         subtitle = rawData.mediaURL
+    }
+    
+    init(onlyLocation: CLLocationCoordinate2D) {
+        coordinate = onlyLocation
+        studentLocation = nil
+        title = nil
+        subtitle = nil
     }
 }
