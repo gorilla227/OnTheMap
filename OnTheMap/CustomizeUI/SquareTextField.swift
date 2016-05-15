@@ -15,7 +15,7 @@ class SquareTextField: UITextField {
         super.drawRect(rect)
         
         // Drawing code
-        layer.cornerRadius = 2.0
+        layer.cornerRadius = rect.size.height / 5
     }
     
     override func textRectForBounds(bounds: CGRect) -> CGRect {

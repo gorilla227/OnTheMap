@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A16193891CE6EFD200EE2264 /* FullTransparentNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16193881CE6EFD200EE2264 /* FullTransparentNavigationBar.swift */; };
+		A161938B1CE6F4FF00EE2264 /* AddMyPinVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A161938A1CE6F4FF00EE2264 /* AddMyPinVC.swift */; };
+		A1D6E48A1CE82A0900117697 /* RoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D6E4891CE82A0900117697 /* RoundButton.swift */; };
 		B21120A31CE3B83F0072E9C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120A21CE3B83F0072E9C5 /* AppDelegate.swift */; };
 		B21120A81CE3B83F0072E9C5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B21120A61CE3B83F0072E9C5 /* Main.storyboard */; };
 		B21120AA1CE3B83F0072E9C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B21120A91CE3B83F0072E9C5 /* Assets.xcassets */; };
@@ -44,6 +47,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A16193881CE6EFD200EE2264 /* FullTransparentNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FullTransparentNavigationBar.swift; path = CustomizeUI/FullTransparentNavigationBar.swift; sourceTree = "<group>"; };
+		A161938A1CE6F4FF00EE2264 /* AddMyPinVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddMyPinVC.swift; sourceTree = "<group>"; };
+		A1D6E4891CE82A0900117697 /* RoundButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RoundButton.swift; path = CustomizeUI/RoundButton.swift; sourceTree = "<group>"; };
 		B211209F1CE3B83F0072E9C5 /* OnTheMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnTheMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B21120A21CE3B83F0072E9C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B21120A71CE3B83F0072E9C5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -160,6 +166,7 @@
 			children = (
 				B21120D01CE3D03C0072E9C5 /* LoginVC.swift */,
 				B2E091461CE4F872004254AE /* MainTabBarVC.swift */,
+				A161938A1CE6F4FF00EE2264 /* AddMyPinVC.swift */,
 				B2B0CB4B1CE65FB2005EA3AB /* MapPin.swift */,
 				B2E0914A1CE53550004254AE /* MapVC.swift */,
 			);
@@ -170,6 +177,8 @@
 			isa = PBXGroup;
 			children = (
 				B21120D41CE3D83F0072E9C5 /* SquareTextField.swift */,
+				A1D6E4891CE82A0900117697 /* RoundButton.swift */,
+				A16193881CE6EFD200EE2264 /* FullTransparentNavigationBar.swift */,
 			);
 			name = CustomizeUI;
 			sourceTree = "<group>";
@@ -340,9 +349,12 @@
 				B2E091471CE4F872004254AE /* MainTabBarVC.swift in Sources */,
 				B21120DC1CE3E2640072E9C5 /* UdacityConstant.swift in Sources */,
 				B21120D11CE3D03C0072E9C5 /* LoginVC.swift in Sources */,
+				A1D6E48A1CE82A0900117697 /* RoundButton.swift in Sources */,
+				A16193891CE6EFD200EE2264 /* FullTransparentNavigationBar.swift in Sources */,
 				B2E091551CE5596E004254AE /* ParseAPI.swift in Sources */,
 				B2E091561CE5596E004254AE /* ParseConstant.swift in Sources */,
 				B21120D51CE3D83F0072E9C5 /* SquareTextField.swift in Sources */,
+				A161938B1CE6F4FF00EE2264 /* AddMyPinVC.swift in Sources */,
 				B2E0914B1CE53550004254AE /* MapVC.swift in Sources */,
 				B21120A31CE3B83F0072E9C5 /* AppDelegate.swift in Sources */,
 				B2E091491CE52E04004254AE /* GCDBlackBox.swift in Sources */,

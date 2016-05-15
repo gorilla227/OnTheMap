@@ -78,6 +78,26 @@ class MainTabBarVC: UITabBarController {
     }
     
     @IBAction func myPinButtonOnClicked(sender: AnyObject) {
+        let SegueIdentifier = "CreateMyPin"
+        
+        if myPin == nil {
+            // Add myPin
+            performSegueWithIdentifier(SegueIdentifier, sender: self)
+        } else {
+            // Create UIAlertController for overwrite
+            let activityController = UIAlertController(title: nil, message: "You Have Already Posted a Student Location. Would You Like to Overwrite Your Current Location?", preferredStyle: .Alert)
+            let overwriteAction = UIAlertAction(title: "Overwrite", style: .Default) { (action) in
+                print("Overwrite")
+                self.performSegueWithIdentifier(SegueIdentifier, sender: self)
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel) { (action) in
+                print("Cancel")
+            }
+            activityController.addAction(overwriteAction)
+            activityController.addAction(cancelAction)
+            
+            presentViewController(activityController, animated: true, completion: nil)
+        }
     }
     
     @IBAction func refreshMapPinsButtonOnClicked(sender: AnyObject) {

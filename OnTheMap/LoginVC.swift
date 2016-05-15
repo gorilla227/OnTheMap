@@ -12,9 +12,10 @@ class LoginVC: UIViewController {
     @IBOutlet weak var emailTextField: SquareTextField!
     @IBOutlet weak var passwordTextField: SquareTextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var loginButton: RoundButton!
     @IBOutlet weak var signUpButton: UIButton!
     @IBOutlet weak var facebookLoginButton: UIButton!
+    @IBOutlet weak var mainStackView: UIStackView!
     
     let udacity = UdacityAPI.sharedInstance()
     
@@ -112,6 +113,50 @@ class LoginVC: UIViewController {
         
     }
     
+    // MARK: Keyboard adjustment
+    func getKeyboardHeight(notification: NSNotification) -> CGFloat {
+        UIApplication.sharedApplication()
+        if let userInfo = notification.userInfo {
+            let keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue
+            return keyboardSize.CGRectValue().height
+        } else {
+            return 0
+        }
+    }
+    
+    func activedTextField() -> UITextField? {
+        if emailTextField.isFirstResponder() {
+            return emailTextField
+        } else if passwordTextField.isFirstResponder() {
+            return passwordTextField
+        } else {
+            return nil
+        }
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        // Move view to prevent keyboard covers textField
+        if let textField = activedTextField() {
+            let rectInMainView = textField.convertRect(textField.frame, toView: mainStackView)
+            let moveDistance = max((getKeyboardHeight(notification) - (mainStackView.frame.size.height - rectInMainView.size.height - rectInMainView.origin.y)), 0)
+            mainStackView.transform = CGAffineTransformMakeTranslation(0, -moveDistance)
+        }
+    }
+    
+    func keyboardWillHidden(notification: NSNotification) {
+        mainStackView.transform = CGAffineTransformMakeTranslation(0, 0)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHidden), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
     /*
     // MARK: - Navigation
 
@@ -122,4 +167,11 @@ class LoginVC: UIViewController {
     }
     */
 
+}
+
+extension LoginVC: UITextFieldDelegate {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }
