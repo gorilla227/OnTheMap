@@ -12,7 +12,6 @@ class MainTabBarVC: UITabBarController {
 
     let udacity = UdacityAPI.sharedInstance()
     let parse = ParseAPI.sharedInstance()
-    var myPin: MapPin?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,23 +27,19 @@ class MainTabBarVC: UITabBarController {
                 return
             }
             
-            self.parse.studentLocations = result
-            print(result?.count)
-            self.initializeMyPin()
-            
-            self.loadMapPinsForSubViewControllers()
+            self.queryMyLocation()
         }
     }
     
-    private func initializeMyPin() {
-        myPin = nil
-        if let studentLocations = parse.studentLocations {
-            for studentLocation in studentLocations {
-                if let uniqueKey = studentLocation.uniqueKey where uniqueKey == self.udacity.accountID {
-                    self.myPin = MapPin(rawData: studentLocation)
-                    break
-                }
+    private func queryMyLocation() {
+        parse.queryStudentLocation(udacity.accountID!) { (result, error) in
+            if error != nil {
+                print(error?.domain, error?.localizedDescription)
             }
+            
+            self.parse.myLocation = result
+            self.removeMyLocationFromList()
+            self.loadMapPinsForSubViewControllers()
         }
     }
     
@@ -52,6 +47,17 @@ class MainTabBarVC: UITabBarController {
         for viewController in self.viewControllers! {
             if let mapVC = viewController as? MapVC where viewController.isKindOfClass(MapVC) {
                 mapVC.loadMapPin()
+            }
+        }
+    }
+    
+    private func removeMyLocationFromList() {
+        if let myLocation = parse.myLocation, var studentLocations = parse.studentLocations {
+            for location in studentLocations {
+                if location == myLocation {
+                    studentLocations.removeAtIndex(studentLocations.indexOf(location)!)
+                    return
+                }
             }
         }
     }
@@ -80,7 +86,8 @@ class MainTabBarVC: UITabBarController {
     @IBAction func myPinButtonOnClicked(sender: AnyObject) {
         let SegueIdentifier = "CreateMyPin"
         
-        if myPin == nil {
+        print(parse.myLocation)
+        if parse.myLocation == nil {
             // Add myPin
             performSegueWithIdentifier(SegueIdentifier, sender: self)
         } else {

@@ -12,9 +12,87 @@ class ParseAPI: NSObject {
     
     // MARK: Properties
     var studentLocations: [StudentLocation]?
+    var myLocation: StudentLocation?
     
-    // MARK: Private Functions
+    // MARK: Methods Functions
     
+    func getStudentLocations(parameters: [String: AnyObject]?, completionHandler: (result: [StudentLocation]?, error: NSError?) -> Void) {
+        let errorDomain = "getStudentLocations"
+        
+        // 1. Create Request
+        let request = generateRequest(HTTPMethodType.GET, requestMethod: Constants.Methods.GETingStudentLocations, parameters: nil, httpBody: nil)
+        
+        // 2. Create Task
+        let task = createDataTaskWithRequest(request, errorDomain: errorDomain) {(result, error) in
+            guard error == nil else {
+                completionHandler(result: nil, error: error)
+                return
+            }
+            
+            guard let results = (result as? [String: AnyObject])![Constants.ResponseKeys.Results] as? [[String: AnyObject]] else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return incorrect JSON structure"]))
+                return
+            }
+            
+            var studentLocations = [StudentLocation]()
+            for locationDictionary in results {
+                let studentLocation = StudentLocation(dictionary: locationDictionary)
+                studentLocations.append(studentLocation)
+            }
+            self.studentLocations = studentLocations
+            completionHandler(result: studentLocations, error: nil)
+        }
+        
+        // 3. Run Task
+        task.resume()
+    }
+    
+    func queryStudentLocation(uniqueKey: String, completionHandler: (result: StudentLocation?, error: NSError?) -> Void) {
+        let errorDomain = "queryStudentLocation"
+        
+        // 1. Create Request
+        let parameter = [Constants.ParameterKeys.Where: "{\"\(StudentLocation.ObjectKeys.UniqueKey)\":\"\(uniqueKey)\"}"]
+        let request = generateRequest(HTTPMethodType.GET, requestMethod: Constants.Methods.QUERYingStudentLocation, parameters: parameter, httpBody: nil)
+        print(request.URL)
+        
+        // 2. Create Task
+        let task = createDataTaskWithRequest(request, errorDomain: errorDomain) { (result, error) in
+            guard error == nil else {
+                completionHandler(result: nil, error: error)
+                return
+            }
+            
+            guard let results = (result as? [String: AnyObject])![Constants.ResponseKeys.Results] as? [[String: AnyObject]] else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return incorrect JSON structure"]))
+                return
+            }
+            
+            if results.count == 1 {
+                let studentLocationDictionary = results.first
+                let studentLocation = StudentLocation(dictionary: studentLocationDictionary!)
+                completionHandler(result: studentLocation, error: nil)
+            } else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Not get correct student location"]))
+            }
+        }
+        
+        // 3. Run Task
+        task.resume()
+        
+    }
+    
+    // MARK: Shared Instance
+    
+    class func sharedInstance() -> ParseAPI {
+        struct Singleton {
+            static var sharedInstance = ParseAPI()
+        }
+        return Singleton.sharedInstance
+    }
+}
+
+// Private Functions
+extension ParseAPI {
     private func desearializeJSONData(data: NSData) throws -> AnyObject? {
         do {
             let result = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
@@ -33,7 +111,7 @@ class ParseAPI: NSObject {
         if let parameters = parameters {
             urlComponents.queryItems = [NSURLQueryItem]()
             for (key, value) in parameters {
-                let queryItem = NSURLQueryItem(name: key, value: String(value).stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()))
+                let queryItem = NSURLQueryItem(name: key, value: value as? String)
                 urlComponents.queryItems?.append(queryItem)
             }
         }
@@ -92,46 +170,5 @@ class ParseAPI: NSObject {
             }
         }
         return task
-    }
-    
-    // MARK: Methods Functions
-    
-    func getStudentLocations(parameters: [String: AnyObject]?, completionHandler: (result: [StudentLocation]?, error: NSError?) -> Void) {
-        let errorDomain = "getStudentLocations"
-        
-        // 1. Create Request
-        let request = generateRequest(HTTPMethodType.GET, requestMethod: Constants.Methods.GETingStudentLocations, parameters: nil, httpBody: nil)
-        
-        // 2. Create Task
-        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain) {(result: AnyObject?, error: NSError?) in
-            guard error == nil else {
-                completionHandler(result: nil, error: error)
-                return
-            }
-            
-            guard let results = (result as? [String: AnyObject])![Constants.ResponseKeys.Results] as? [[String: AnyObject]] else {
-                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return incorrect JSON structure"]))
-                return
-            }
-            
-            var studentLocations = [StudentLocation]()
-            for locationDictionary in results {
-                let studentLocation = StudentLocation(dictionary: locationDictionary)
-                studentLocations.append(studentLocation)
-            }
-            completionHandler(result: studentLocations, error: nil)
-        }
-        
-        //3. Run Task
-        task.resume()
-    }
-    
-    // MARK: Shared Instance
-    
-    class func sharedInstance() -> ParseAPI {
-        struct Singleton {
-            static var sharedInstance = ParseAPI()
-        }
-        return Singleton.sharedInstance
     }
 }
