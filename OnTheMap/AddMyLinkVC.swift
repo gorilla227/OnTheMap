@@ -17,6 +17,8 @@ class AddMyLinkVC: UIViewController {
     
     // MARK: Properties
     var locationString: String?
+    var location: CLLocationCoordinate2D?
+    let udacity = UdacityAPI.sharedInstance()
     let parse = ParseAPI.sharedInstance()
 
     // MARK: Functions
@@ -28,7 +30,6 @@ class AddMyLinkVC: UIViewController {
     }
     
     func findLocationAndAddToMap() {
-        print(locationString)
         if let locationString = self.locationString {
             let localSearchRequest = MKLocalSearchRequest()
             localSearchRequest.naturalLanguageQuery = locationString
@@ -43,6 +44,7 @@ class AddMyLinkVC: UIViewController {
                     let mapItem = localSearchResponse.mapItems.first
                     
                     if let location = mapItem?.placemark.coordinate {
+                        self.location = location
                         let mapPin = MapPin(onlyLocation: location)
                         self.mapView.addAnnotation(mapPin)
                         
@@ -60,6 +62,26 @@ class AddMyLinkVC: UIViewController {
     // MARK: IBActions
     
     @IBAction func sumbitButtonOnClicked(sender: AnyObject) {
+        let parameters: [String: AnyObject] = [
+            StudentLocation.ObjectKeys.UniqueKey: udacity.accountID!,
+            StudentLocation.ObjectKeys.FirstName: udacity.accountData![UdacityAPI.Constants.ResponseKeys.FirstName]!,
+            StudentLocation.ObjectKeys.LastName: udacity.accountData![UdacityAPI.Constants.ResponseKeys.LastName]!,
+            StudentLocation.ObjectKeys.MapString: locationString!,
+            StudentLocation.ObjectKeys.MediaURL: linkTextField.text!,
+            StudentLocation.ObjectKeys.Latitude: (location?.latitude)!,
+            StudentLocation.ObjectKeys.Longitude: (location?.longitude)!
+        ]
+        
+        print(parameters)
+        
+        parse.addStudentLocation(parameters) { (result, error) in
+            guard error == nil else {
+                print("Submit My Location error: \(error?.domain), \(error?.localizedDescription)")
+                return
+            }
+            
+            self.parse.myLocation = result
+        }
     }
 
     @IBAction func cancelButtonOnClicked(sender: AnyObject) {

@@ -53,7 +53,6 @@ class ParseAPI: NSObject {
         // 1. Create Request
         let parameter = [Constants.ParameterKeys.Where: "{\"\(StudentLocation.ObjectKeys.UniqueKey)\":\"\(uniqueKey)\"}"]
         let request = generateRequest(HTTPMethodType.GET, requestMethod: Constants.Methods.QUERYingStudentLocation, parameters: parameter, httpBody: nil)
-        print(request.URL)
         
         // 2. Create Task
         let task = createDataTaskWithRequest(request, errorDomain: errorDomain) { (result, error) in
@@ -78,7 +77,49 @@ class ParseAPI: NSObject {
         
         // 3. Run Task
         task.resume()
+    }
+    
+    func addStudentLocation(parameters: [String: AnyObject], completionHandler: (result: StudentLocation?, error: NSError?) -> Void) {
+        let errorDomain = "addStudentLocation"
         
+        // 1. Create Request
+        let httpBody: NSData?
+        do {
+            httpBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: .PrettyPrinted)
+        } catch {
+            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
+            return
+        }
+        
+        let request = generateRequest(HTTPMethodType.POST, requestMethod: Constants.Methods.POSTingStudentLocation, parameters: nil, httpBody: httpBody)
+        
+        // 2. Create Task
+        let task = createDataTaskWithRequest(request, errorDomain: errorDomain) { (result, error) in
+            guard error == nil else {
+                completionHandler(result: nil, error: error)
+                return
+            }
+            
+            guard let result = result as? [String: AnyObject] else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return incorrect JSON structure"]))
+                return
+            }
+            
+            var dictionary = parameters
+            guard let createdAt = result[Constants.ResponseKeys.CreatedAt] as? String, let objectID = result[Constants.ResponseKeys.ObjectID] else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find CreatedAt and ObjectID in response"]))
+                return
+            }
+            
+            dictionary[StudentLocation.ObjectKeys.CreateAt] = createdAt
+            dictionary[StudentLocation.ObjectKeys.ObjectID] = objectID
+            let studentLocation = StudentLocation(dictionary: dictionary)
+            
+            completionHandler(result: studentLocation, error: nil)
+        }
+        
+        // 3. Run Task
+        task.resume()
     }
     
     // MARK: Shared Instance

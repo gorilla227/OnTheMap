@@ -33,6 +33,9 @@ extension UdacityAPI {
             static let Session = "session"
             static let SessionID = "id"
             static let SessionExpiration = "expiration"
+            static let User = "user"
+            static let FirstName = "first_name"
+            static let LastName = "last_name"
         }
         
         struct ReplacementKeys {

@@ -36,6 +36,8 @@ extension ParseAPI {
         
         struct ResponseKeys {
             static let Results = "results"
+            static let CreatedAt = "createdAt"
+            static let ObjectID = "objectId"
         }
         
         struct ReplacementKeys {

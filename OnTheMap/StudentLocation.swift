@@ -39,8 +39,12 @@ struct StudentLocation {
         location = CLLocation(latitude: dictionary[ObjectKeys.Latitude] as! Double, longitude: dictionary[ObjectKeys.Longitude] as! Double)
         
         createdAt = dateFormatter.dateFromString(dictionary[ObjectKeys.CreateAt] as! String)!
-        if let updateDate = dateFormatter.dateFromString(dictionary[ObjectKeys.UpdatedAt] as! String) {
-            updatedAt = updateDate
+        if let updatedAtString = dictionary[ObjectKeys.UpdatedAt] as? String {
+            if let updateDate = dateFormatter.dateFromString(updatedAtString) {
+                updatedAt = updateDate
+            } else {
+                updatedAt = nil
+            }
         } else {
             updatedAt = nil
         }

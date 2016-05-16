@@ -98,7 +98,7 @@ class LoginVC: UIViewController {
                         return
                     }
                     
-                    if let result = result {
+                    if let result = result![UdacityAPI.Constants.ResponseKeys.User] as? [String: AnyObject] {
                         self.udacity.accountData = result
                         
                         self.completeLogin()

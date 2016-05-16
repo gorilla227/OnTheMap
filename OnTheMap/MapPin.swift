@@ -19,7 +19,7 @@ class MapPin: NSObject, MKAnnotation {
     init(rawData: StudentLocation) {
         studentLocation = rawData
         coordinate = rawData.location.coordinate
-        title = rawData.firstName + rawData.lastName
+        title = rawData.firstName + " " + rawData.lastName
         subtitle = rawData.mediaURL
     }
     
