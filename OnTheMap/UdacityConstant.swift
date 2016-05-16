@@ -13,6 +13,7 @@ extension UdacityAPI {
         struct Base {
             static let Scheme = "https"
             static let Host = "www.udacity.com"
+            static let SignUpURL = "https://www.udacity.com/account/auth#!/signup"
         }
         struct Methods {
             static let POSTingSession = "/api/session"
