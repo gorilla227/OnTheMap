@@ -35,6 +35,14 @@ class MapVC: UIViewController, MKMapViewDelegate {
                 self.mapView.addAnnotation(annotation)
             })
         }
+        
+        // Add User's annotation
+        if let myLocation = parse.myLocation {
+            performUIUpdatesOnMain({ 
+                let annotation = MapPin(rawData: myLocation)
+                self.mapView.addAnnotation(annotation)
+            })
+        }
     }
     
     // MARK: MKMapViewDelegate Protocol
