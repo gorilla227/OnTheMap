@@ -19,12 +19,15 @@ extension UdacityAPI {
             static let POSTingSession = "/api/session"
             static let DELETEingSession = "/api/session"
             static let GETingPublicUserData = "/api/users/{\(ReplacementKeys.UserID)}"
+            static let POSTingSessionWithFacebookAuthentication = "/api/session"
         }
         
         struct ParameterKeys {
             static let Udacity = "udacity"
             static let UserName = "username"
             static let Password = "password"
+            static let FacebookMobile = "facebook_mobile"
+            static let FacebookAccessToken = "access_token"
         }
         
         struct ResponseKeys {

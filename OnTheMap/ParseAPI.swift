@@ -69,6 +69,7 @@ class ParseAPI: NSObject {
             if results.count == 1 {
                 let studentLocationDictionary = results.first
                 let studentLocation = StudentLocation(dictionary: studentLocationDictionary!)
+                print(studentLocationDictionary)
                 completionHandler(result: studentLocation, error: nil)
             } else {
                 completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Not get correct student location"]))
@@ -113,6 +114,52 @@ class ParseAPI: NSObject {
             
             dictionary[StudentLocation.ObjectKeys.CreateAt] = createdAt
             dictionary[StudentLocation.ObjectKeys.ObjectID] = objectID
+            let studentLocation = StudentLocation(dictionary: dictionary)
+            
+            completionHandler(result: studentLocation, error: nil)
+        }
+        
+        // 3. Run Task
+        task.resume()
+    }
+    
+    func updateStudentLocation(oldLocation: StudentLocation, parameters: [String: AnyObject], completionHandler: (result: StudentLocation?, error: NSError?) -> Void) {
+        let errorDomain = "updateStudentLocation"
+        
+        // 1. Create Request
+        let requestMethod = replacPlaceholder(Constants.Methods.PUTingStudentLocation, replacements: [Constants.ReplacementKeys.ObjectID: oldLocation.objectID])
+        
+        let httpBody: NSData?
+        do {
+            httpBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: .PrettyPrinted)
+        } catch {
+            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
+            return
+        }
+        
+        let request = generateRequest(HTTPMethodType.PUT, requestMethod: requestMethod, parameters: nil, httpBody: httpBody)
+        
+        // 2. Create Task
+        let task = createDataTaskWithRequest(request, errorDomain: errorDomain) { (result, error) in
+            guard error == nil else {
+                completionHandler(result: nil, error: error)
+                return
+            }
+            
+            guard let result = result as? [String: AnyObject] else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Return incorrect JSON structure"]))
+                return
+            }
+            
+            var dictionary = parameters
+            guard let updatedAt = result[Constants.ResponseKeys.UpdatedAt] as? String else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find updatedAt in response"]))
+                return
+            }
+            print("Update Result: \(result)")
+            dictionary[StudentLocation.ObjectKeys.UpdatedAt] = updatedAt
+            dictionary[StudentLocation.ObjectKeys.ObjectID] = oldLocation.objectID
+            dictionary[StudentLocation.ObjectKeys.CreateAt] = oldLocation.dateFormatter.stringFromDate(oldLocation.createdAt)
             let studentLocation = StudentLocation(dictionary: dictionary)
             
             completionHandler(result: studentLocation, error: nil)

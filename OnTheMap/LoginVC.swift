@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import FBSDKCoreKit
+import FBSDKLoginKit
 
 class LoginVC: UIViewController {
     @IBOutlet weak var emailTextField: SquareTextField!
@@ -14,7 +16,7 @@ class LoginVC: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var loginButton: RoundButton!
     @IBOutlet weak var signUpButton: UIButton!
-    @IBOutlet weak var facebookLoginButton: UIButton!
+    @IBOutlet weak var facebookLoginButton: FBSDKLoginButton!
     @IBOutlet weak var mainStackView: UIStackView!
     
     let udacity = UdacityAPI.sharedInstance()
@@ -23,6 +25,60 @@ class LoginVC: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        facebookLoginButton.readPermissions = ["public_profile", "email", "user_friends"]
+        if FBSDKAccessToken.currentAccessToken() != nil {
+            // Create Session with Facebook Authentication
+            self.udacity.createSessionWithFacebookAuthentication(FBSDKAccessToken.currentAccessToken().tokenString, completionHandler: { (result, error) in
+                guard error == nil else {
+                    print(error?.domain, error?.localizedDescription)
+                    self.stopInteraction(false, runInBackground: false)
+                    return
+                }
+                
+                guard let sessionID = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionID] as? String else {
+                    self.stopInteraction(false, runInBackground: false)
+                    return
+                }
+                self.udacity.sessionID = sessionID
+                print("Session ID: \(self.udacity.sessionID)")
+                
+                guard let expirationDateString = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionExpiration] as? String else {
+                    self.stopInteraction(false, runInBackground: false)
+                    return
+                }
+                
+                guard let expirationDate = UdacityAPI.Constants.dateFormatter.dateFromString(expirationDateString) else {
+                    self.stopInteraction(false, runInBackground: false)
+                    return
+                }
+                self.udacity.expirationDate = expirationDate
+                print("Expiration Date: \(self.udacity.expirationDate)")
+                
+                if let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String {
+                    self.udacity.accountID = accountKey
+                    print("Account Key: \(self.udacity.accountID)")
+                    
+                    // Get Public User Data
+                    self.udacity.getPublicUserData(accountKey, completionHandler: { (result, error) in
+                        
+                        guard error == nil else {
+                            print(error?.domain, error?.localizedDescription)
+                            self.stopInteraction(false, runInBackground: false)
+                            
+                            return
+                        }
+                        
+                        if let result = result![UdacityAPI.Constants.ResponseKeys.User] as? [String: AnyObject] {
+                            self.udacity.accountData = result
+                            
+                            self.completeLogin()
+                            self.stopInteraction(false, runInBackground: true)
+                        }
+                    })
+                }
+            })
+
+        }
     }
     
     func completeLogin() {
@@ -62,7 +118,7 @@ class LoginVC: UIViewController {
         stopInteraction(true, runInBackground: false)
         
         // Create Session
-        udacity.createSession("gorilla.andy@gmail.com", password: "gorilla8518", completionHandler: { (result, error) in
+        udacity.createSession(emailTextField.text!, password: passwordTextField.text!, completionHandler: { (result, error) in
             
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
@@ -119,6 +175,24 @@ class LoginVC: UIViewController {
         UIApplication.sharedApplication().openURL(signUpURL!)
     }
     
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+}
+
+extension LoginVC: UITextFieldDelegate {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
     // MARK: Keyboard adjustment
     func getKeyboardHeight(notification: NSNotification) -> CGFloat {
         UIApplication.sharedApplication()
@@ -162,22 +236,76 @@ class LoginVC: UIViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
-extension LoginVC: UITextFieldDelegate {
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
+extension LoginVC: FBSDKLoginButtonDelegate {
+    func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {
+        guard error == nil else {
+            print("Facebook Login error: \(error.localizedDescription)")
+            return
+        }
+        
+        guard !result.isCancelled else {
+            print("Facebook Login cancelled")
+            return
+        }
+        
+        if result.grantedPermissions.contains("email") {
+            print(result.token.tokenString)
+            // Create Session with Facebook Authentication
+            self.udacity.createSessionWithFacebookAuthentication(result.token.tokenString, completionHandler: { (result, error) in
+                guard error == nil else {
+                    print(error?.domain, error?.localizedDescription)
+                    self.stopInteraction(false, runInBackground: false)
+                    return
+                }
+                
+                guard let sessionID = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionID] as? String else {
+                    self.stopInteraction(false, runInBackground: false)
+                    return
+                }
+                self.udacity.sessionID = sessionID
+                print("Session ID: \(self.udacity.sessionID)")
+                
+                guard let expirationDateString = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionExpiration] as? String else {
+                    self.stopInteraction(false, runInBackground: false)
+                    return
+                }
+                
+                guard let expirationDate = UdacityAPI.Constants.dateFormatter.dateFromString(expirationDateString) else {
+                    self.stopInteraction(false, runInBackground: false)
+                    return
+                }
+                self.udacity.expirationDate = expirationDate
+                print("Expiration Date: \(self.udacity.expirationDate)")
+                
+                if let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String {
+                    self.udacity.accountID = accountKey
+                    print("Account Key: \(self.udacity.accountID)")
+                    
+                    // Get Public User Data
+                    self.udacity.getPublicUserData(accountKey, completionHandler: { (result, error) in
+                        
+                        guard error == nil else {
+                            print(error?.domain, error?.localizedDescription)
+                            self.stopInteraction(false, runInBackground: false)
+                            
+                            return
+                        }
+                        
+                        if let result = result![UdacityAPI.Constants.ResponseKeys.User] as? [String: AnyObject] {
+                            self.udacity.accountData = result
+                            
+                            self.completeLogin()
+                            self.stopInteraction(false, runInBackground: true)
+                        }
+                    })
+                }
+            })
+        }
+    }
+    
+    func loginButtonDidLogOut(loginButton: FBSDKLoginButton!) {
+        
     }
 }

@@ -38,6 +38,7 @@ extension ParseAPI {
             static let Results = "results"
             static let CreatedAt = "createdAt"
             static let ObjectID = "objectId"
+            static let UpdatedAt = "updatedAt"
         }
         
         struct ReplacementKeys {
@@ -46,6 +47,6 @@ extension ParseAPI {
     }
     
     enum HTTPMethodType: String {
-        case GET = "GET", POST = "POST", DELETE = "DELETE"
+        case GET = "GET", POST = "POST", DELETE = "DELETE", PUT = "PUT"
     }
 }

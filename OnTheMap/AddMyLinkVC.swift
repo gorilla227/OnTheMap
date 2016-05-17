@@ -72,15 +72,30 @@ class AddMyLinkVC: UIViewController {
             StudentLocation.ObjectKeys.Longitude: (location?.longitude)!
         ]
         
-        print(parameters)
+        print("Submit Parameters: \(parameters)")
         
-        parse.addStudentLocation(parameters) { (result, error) in
-            guard error == nil else {
-                print("Submit My Location error: \(error?.domain), \(error?.localizedDescription)")
-                return
+        if let myLocation = parse.myLocation {
+            // Update Student Location
+            parse.updateStudentLocation(myLocation, parameters: parameters, completionHandler: { (result, error) in
+                guard error == nil else {
+                    print("Updated My Location error: \(error?.domain), \(error?.localizedDescription)")
+                    return
+                }
+                
+                self.parse.myLocation = result
+                self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
+            })
+        } else {
+            // Add Student Location
+            parse.addStudentLocation(parameters) { (result, error) in
+                guard error == nil else {
+                    print("Added My Location error: \(error?.domain), \(error?.localizedDescription)")
+                    return
+                }
+                
+                self.parse.myLocation = result
+                self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
             }
-            
-            self.parse.myLocation = result
         }
     }
 
@@ -98,4 +113,11 @@ class AddMyLinkVC: UIViewController {
     }
     */
 
+}
+
+extension AddMyLinkVC: UITextFieldDelegate {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }

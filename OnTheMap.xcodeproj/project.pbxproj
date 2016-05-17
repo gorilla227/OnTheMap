@@ -23,6 +23,8 @@
 		B21120DC1CE3E2640072E9C5 /* UdacityConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */; };
 		B2B0CB4A1CE646E8005EA3AB /* StudentLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B0CB491CE646E8005EA3AB /* StudentLocation.swift */; };
 		B2B0CB4C1CE65FB2005EA3AB /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B0CB4B1CE65FB2005EA3AB /* MapPin.swift */; };
+		B2D17C751CEA43810086F3FD /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2D17C731CEA43810086F3FD /* FBSDKCoreKit.framework */; };
+		B2D17C761CEA43810086F3FD /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2D17C741CEA43810086F3FD /* FBSDKLoginKit.framework */; };
 		B2E091471CE4F872004254AE /* MainTabBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E091461CE4F872004254AE /* MainTabBarVC.swift */; };
 		B2E091491CE52E04004254AE /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E091481CE52E04004254AE /* GCDBlackBox.swift */; };
 		B2E0914B1CE53550004254AE /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E0914A1CE53550004254AE /* MapVC.swift */; };
@@ -70,6 +72,8 @@
 		B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityConstant.swift; sourceTree = "<group>"; };
 		B2B0CB491CE646E8005EA3AB /* StudentLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentLocation.swift; sourceTree = "<group>"; };
 		B2B0CB4B1CE65FB2005EA3AB /* MapPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
+		B2D17C731CEA43810086F3FD /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = FaceBookSDK/FBSDKCoreKit.framework; sourceTree = "<group>"; };
+		B2D17C741CEA43810086F3FD /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = FaceBookSDK/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		B2E091461CE4F872004254AE /* MainTabBarVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarVC.swift; sourceTree = "<group>"; };
 		B2E091481CE52E04004254AE /* GCDBlackBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 		B2E0914A1CE53550004254AE /* MapVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
@@ -82,6 +86,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2D17C761CEA43810086F3FD /* FBSDKLoginKit.framework in Frameworks */,
+				B2D17C751CEA43810086F3FD /* FBSDKCoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				B2E091481CE52E04004254AE /* GCDBlackBox.swift */,
+				B2D17C771CEA43880086F3FD /* FacebookSDK */,
 				B2E091571CE55972004254AE /* Parse */,
 				B21120DA1CE3E2380072E9C5 /* Udacity */,
 			);
@@ -203,6 +210,15 @@
 				B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */,
 			);
 			name = Udacity;
+			sourceTree = "<group>";
+		};
+		B2D17C771CEA43880086F3FD /* FacebookSDK */ = {
+			isa = PBXGroup;
+			children = (
+				B2D17C731CEA43810086F3FD /* FBSDKCoreKit.framework */,
+				B2D17C741CEA43810086F3FD /* FBSDKLoginKit.framework */,
+			);
+			name = FacebookSDK;
 			sourceTree = "<group>";
 		};
 		B2E091571CE55972004254AE /* Parse */ = {
@@ -505,6 +521,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/OnTheMap/FaceBookSDK",
+				);
 				INFOPLIST_FILE = OnTheMap/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.axu.OnTheMap;
@@ -516,6 +536,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/OnTheMap/FaceBookSDK",
+				);
 				INFOPLIST_FILE = OnTheMap/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.axu.OnTheMap;

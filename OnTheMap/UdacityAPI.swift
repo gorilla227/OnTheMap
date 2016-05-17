@@ -88,7 +88,7 @@ class UdacityAPI: NSObject {
     
     // MARK: Methods Functions
     
-    func createSession(username: String, password: String, completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) {
+    func createSession(username: String, password: String, completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) {
         let errorDomain = "createSession"
         
         // 1. Create Request
@@ -116,7 +116,7 @@ class UdacityAPI: NSObject {
         task.resume()
     }
     
-    func deleteSession(completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) {
+    func deleteSession(completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) {
         let errorDomain = "deleteSession"
         
         // 1. Create Request
@@ -141,7 +141,39 @@ class UdacityAPI: NSObject {
         task.resume()
     }
     
-    func getPublicUserData(userID: String, completionHandler:(result: [String: AnyObject]?, error: NSError?) -> Void) {
+    func createSessionWithFacebookAuthentication(facebookAccessToken: String, completionHandler: (result: [ String: AnyObject]?, error: NSError?) -> Void) {
+        let errorDomain = "postSessionWithFacebookAuthentication"
+        
+        // 1. Create Request
+        let parameters = [
+            Constants.ParameterKeys.FacebookMobile: [
+                Constants.ParameterKeys.FacebookAccessToken: facebookAccessToken + ";"
+            ]
+        ]
+        print(facebookAccessToken)
+        
+        let httpBody: NSData?
+        do {
+            httpBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: .PrettyPrinted)
+        } catch {
+            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
+            return
+        }
+        let httpBody2 = "{\"facebook_mobile\":{\"access_token\":\(facebookAccessToken)}}".dataUsingEncoding(NSUTF8StringEncoding)
+        print(String(data: httpBody!, encoding: NSUTF8StringEncoding))
+        print(String(data: httpBody2!, encoding: NSUTF8StringEncoding))
+        
+        let request = generateRequest(HTTPMethodType.POST, requestMethod: Constants.Methods.POSTingSessionWithFacebookAuthentication, httpBody: httpBody)
+        
+        // 2. Create Task
+        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
+        
+        // 3. Run Task
+        task.resume()
+        
+    }
+    
+    func getPublicUserData(userID: String, completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) {
         let errorDomain = "getPublicUserData"
         
         // 1. Create Request
