@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import FBSDKCoreKit
+import FBSDKLoginKit
 
 class MainTabBarVC: UITabBarController {
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
 
     let udacity = UdacityAPI.sharedInstance()
     let parse = ParseAPI.sharedInstance()
@@ -17,7 +20,8 @@ class MainTabBarVC: UITabBarController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -69,21 +73,19 @@ class MainTabBarVC: UITabBarController {
     // MARK: IBActions
 
     @IBAction func logoutButtonOnClicked(sender: AnyObject) {
+        activityIndicator.startAnimating()
+        if FBSDKAccessToken.currentAccessToken() != nil {
+            FBSDKAccessToken.setCurrentAccessToken(nil)
+            FBSDKProfile.setCurrentProfile(nil)
+        }
         udacity.deleteSession { (result, error) in
+            self.activityIndicator.stopAnimating()
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
                 return
             }
-            
-            if let sessionID = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionID] as? String {
-                print("Delete Session ID: \(sessionID)")
-                self.udacity.sessionID = nil
-                self.udacity.expirationDate = nil
-                self.udacity.accountID = nil
-                self.udacity.accountData = nil
                 
-                self.dismissViewControllerAnimated(true, completion: nil)
-            }
+            self.dismissViewControllerAnimated(true, completion: nil)
         }
     }
     

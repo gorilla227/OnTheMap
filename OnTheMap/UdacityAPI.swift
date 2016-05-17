@@ -16,8 +16,209 @@ class UdacityAPI: NSObject {
     var expirationDate: NSDate?
     var accountData: [String: AnyObject]?
     
-    // MARK: Private Functions
+    // MARK: Methods Functions
     
+    func createSession(username: String, password: String, completionHandler: (success: Bool, error: NSError?) -> Void) {
+        let errorDomain = "createSession"
+        
+        // 1. Create Request
+        let parameters = [
+            Constants.ParameterKeys.Udacity: [
+                Constants.ParameterKeys.UserName: username,
+                Constants.ParameterKeys.Password: password
+            ]
+        ]
+        
+        let httpBody: NSData?
+        do {
+            httpBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: .PrettyPrinted)
+        } catch {
+            completionHandler(success: false, error: NSError(domain: errorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
+            return
+        }
+        
+        let request = generateRequest(HTTPMethodType.POST, requestMethod: Constants.Methods.POSTingSession, httpBody: httpBody)
+        
+        // 2. Create Task
+        let task = createDataTaskWithRequest(request, errorDomain: errorDomain) { (result, error) in
+            guard error == nil else {
+                completionHandler(success: false, error: error)
+                return
+            }
+            
+            guard let sessionID = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![Constants.ResponseKeys.SessionID] as? String else {
+                completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find sessionID in response"]))
+                return
+            }
+            self.sessionID = sessionID
+            print("Session ID: \(sessionID)")
+            
+            guard let expirationDateString = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionExpiration] as? String else {
+                completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find expirationDate in response"]))
+                return
+            }
+            
+            guard let expirationDate = UdacityAPI.Constants.dateFormatter.dateFromString(expirationDateString) else {
+                completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't transfer expirationDate from String to NSDate"]))
+                return
+            }
+            self.expirationDate = expirationDate
+            print("Expiration Date: \(expirationDate)")
+            
+            guard let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String else {
+                completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find accountKey in response"]))
+                return
+            }
+            self.accountID = accountKey
+            print("Account Key: \(accountKey)")
+            
+            completionHandler(success: true, error: nil)
+        }
+        // 3. Run Task
+        task.resume()
+    }
+    
+    func createSessionWithFacebookAuthentication(facebookAccessToken: String, completionHandler: (success: Bool, error: NSError?) -> Void) {
+        let errorDomain = "postSessionWithFacebookAuthentication"
+        
+        // 1. Create Request
+        let parameters = [
+            Constants.ParameterKeys.FacebookMobile: [
+                Constants.ParameterKeys.FacebookAccessToken: facebookAccessToken
+            ]
+        ]
+        print(facebookAccessToken)
+        
+        let httpBody: NSData?
+        do {
+            httpBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: .PrettyPrinted)
+        } catch {
+            completionHandler(success: false, error: NSError(domain: errorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
+            return
+        }
+        
+        let request = generateRequest(HTTPMethodType.POST, requestMethod: Constants.Methods.POSTingSessionWithFacebookAuthentication, httpBody: httpBody)
+        
+        // 2. Create Task
+        let task = createDataTaskWithRequest(request, errorDomain: errorDomain) { (result, error) in
+            guard error == nil else {
+                completionHandler(success: false, error: error)
+                return
+            }
+            
+            guard let sessionID = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![Constants.ResponseKeys.SessionID] as? String else {
+                completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find sessionID in response"]))
+                return
+            }
+            self.sessionID = sessionID
+            print("Session ID: \(sessionID)")
+            
+            guard let expirationDateString = (result![UdacityAPI.Constants.ResponseKeys.Session] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.SessionExpiration] as? String else {
+                completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find expirationDate in response"]))
+                return
+            }
+            
+            guard let expirationDate = UdacityAPI.Constants.dateFormatter.dateFromString(expirationDateString) else {
+                completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't transfer expirationDate from String to NSDate"]))
+                return
+            }
+            self.expirationDate = expirationDate
+            print("Expiration Date: \(expirationDate)")
+            
+            guard let accountKey = (result![UdacityAPI.Constants.ResponseKeys.Account] as? [String: AnyObject])![UdacityAPI.Constants.ResponseKeys.AccountKey] as? String else {
+                completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find accountKey in response"]))
+                return
+            }
+            self.accountID = accountKey
+            print("Account Key: \(accountKey)")
+            
+            completionHandler(success: true, error: nil)
+        }
+        
+        // 3. Run Task
+        task.resume()
+    }
+    
+    func deleteSession(completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) {
+        let errorDomain = "deleteSession"
+        
+        // 1. Create Request
+        let request = generateRequest(HTTPMethodType.DELETE, requestMethod: Constants.Methods.DELETEingSession, httpBody: nil) 
+        var xsrfCookie: NSHTTPCookie? = nil
+        let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        for cookie in sharedCookieStorage.cookies! {
+            if cookie.name == "XSRF-TOKEN" {
+                xsrfCookie = cookie
+                break
+            }
+        }
+        
+        if let xsrfCookie = xsrfCookie {
+            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
+        }
+        
+        // 2. Create Task
+        let task = createDataTaskWithRequest(request, errorDomain: errorDomain) { (result, error) in
+            guard error == nil else {
+                completionHandler(result: nil, error: error)
+                return
+            }
+            
+            guard let sessionID = (result![Constants.ResponseKeys.Session] as? [String: AnyObject])![Constants.ResponseKeys.SessionID] as? String else {
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find sessionID in response"]))
+                return
+            }
+            
+            print("Delete Session ID: \(sessionID)")
+            self.sessionID = nil
+            self.expirationDate = nil
+            self.accountID = nil
+            self.accountData = nil
+            
+            completionHandler(result: [Constants.ResponseKeys.SessionID: sessionID], error: nil)
+        }
+        
+        // 3. Run Task
+        task.resume()
+    }
+    
+    func getPublicUserData(userID: String, completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) {
+        let errorDomain = "getPublicUserData"
+        
+        // 1. Create Request
+        let requestMethod = replacPlaceholder(Constants.Methods.GETingPublicUserData, replacements: [Constants.ReplacementKeys.UserID: userID])
+        let request = generateRequest(HTTPMethodType.GET, requestMethod: requestMethod, httpBody: nil)
+        
+        // 2. Create Task
+        let task = createDataTaskWithRequest(request, errorDomain: errorDomain) { (result, error) in
+            guard error == nil else {
+                completionHandler(result: nil, error: error)
+                return
+            }
+            
+            if let result = result![UdacityAPI.Constants.ResponseKeys.User] as? [String: AnyObject] {
+                self.accountData = result
+                
+                completionHandler(result: result, error: nil)
+            }
+        }
+        
+        // 3. Run Task
+        task.resume()
+    }
+    // MARK: Shared Instance
+    
+    class func sharedInstance() -> UdacityAPI {
+        struct Singleton {
+            static var sharedInstance = UdacityAPI()
+        }
+        return Singleton.sharedInstance
+    }
+}
+
+
+// MARK: Private Functions
+extension UdacityAPI {
     private func desearializeJSONData(data: NSData) throws -> AnyObject? {
         let prepareData: NSData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
         do {
@@ -57,7 +258,7 @@ class UdacityAPI: NSObject {
         return targetString
     }
     
-    private func createDataTaskWithRequest(request: NSURLRequest, errorDomain: String, completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    private func createDataTaskWithRequest(request: NSURLRequest, errorDomain: String, completionHandler: (result: AnyObject?, error: NSError?) -> Void) -> NSURLSessionDataTask {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
             guard error == nil else {
                 completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns error: \(error?.localizedDescription)"]))
@@ -84,114 +285,5 @@ class UdacityAPI: NSObject {
             }
         }
         return task
-    }
-    
-    // MARK: Methods Functions
-    
-    func createSession(username: String, password: String, completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) {
-        let errorDomain = "createSession"
-        
-        // 1. Create Request
-        let parameters = [
-            Constants.ParameterKeys.Udacity: [
-                Constants.ParameterKeys.UserName: username,
-                Constants.ParameterKeys.Password: password
-            ]
-        ]
-        
-        let httpBody: NSData?
-        do {
-            httpBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: .PrettyPrinted)
-        } catch {
-            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
-            return
-        }
-        
-        let request = generateRequest(HTTPMethodType.POST, requestMethod: Constants.Methods.POSTingSession, httpBody: httpBody)
-        
-        // 2. Create Task
-        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
-        
-        // 3. Run Task
-        task.resume()
-    }
-    
-    func deleteSession(completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) {
-        let errorDomain = "deleteSession"
-        
-        // 1. Create Request
-        let request = generateRequest(HTTPMethodType.DELETE, requestMethod: Constants.Methods.DELETEingSession, httpBody: nil) 
-        var xsrfCookie: NSHTTPCookie? = nil
-        let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-        for cookie in sharedCookieStorage.cookies! {
-            if cookie.name == "XSRF-TOKEN" {
-                xsrfCookie = cookie
-                break
-            }
-        }
-        
-        if let xsrfCookie = xsrfCookie {
-            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
-        }
-        
-        // 2. Create Task
-        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
-        
-        // 3. Run Task
-        task.resume()
-    }
-    
-    func createSessionWithFacebookAuthentication(facebookAccessToken: String, completionHandler: (result: [ String: AnyObject]?, error: NSError?) -> Void) {
-        let errorDomain = "postSessionWithFacebookAuthentication"
-        
-        // 1. Create Request
-        let parameters = [
-            Constants.ParameterKeys.FacebookMobile: [
-                Constants.ParameterKeys.FacebookAccessToken: facebookAccessToken + ";"
-            ]
-        ]
-        print(facebookAccessToken)
-        
-        let httpBody: NSData?
-        do {
-            httpBody = try NSJSONSerialization.dataWithJSONObject(parameters, options: .PrettyPrinted)
-        } catch {
-            completionHandler(result: nil, error: NSError(domain: errorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON data"]))
-            return
-        }
-        let httpBody2 = "{\"facebook_mobile\":{\"access_token\":\(facebookAccessToken)}}".dataUsingEncoding(NSUTF8StringEncoding)
-        print(String(data: httpBody!, encoding: NSUTF8StringEncoding))
-        print(String(data: httpBody2!, encoding: NSUTF8StringEncoding))
-        
-        let request = generateRequest(HTTPMethodType.POST, requestMethod: Constants.Methods.POSTingSessionWithFacebookAuthentication, httpBody: httpBody)
-        
-        // 2. Create Task
-        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
-        
-        // 3. Run Task
-        task.resume()
-        
-    }
-    
-    func getPublicUserData(userID: String, completionHandler: (result: [String: AnyObject]?, error: NSError?) -> Void) {
-        let errorDomain = "getPublicUserData"
-        
-        // 1. Create Request
-        let requestMethod = replacPlaceholder(Constants.Methods.GETingPublicUserData, replacements: [Constants.ReplacementKeys.UserID: userID])
-        let request = generateRequest(HTTPMethodType.GET, requestMethod: requestMethod, httpBody: nil)
-        
-        // 2. Create Task
-        let task = self.createDataTaskWithRequest(request, errorDomain: errorDomain, completionHandler: completionHandler)
-        
-        // 3. Run Task
-        task.resume()
-    }
-    // MARK: Shared Instance
-    
-    class func sharedInstance() -> UdacityAPI {
-        struct Singleton {
-            static var sharedInstance = UdacityAPI()
-        }
-        return Singleton.sharedInstance
     }
 }
