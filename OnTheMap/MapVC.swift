@@ -93,9 +93,4 @@ class MapVC: UIViewController, MKMapViewDelegate {
             }
         }
     }
-    
-    @IBAction func debugButtonOnClicked(sender: AnyObject) {
-        print(mapView.annotations.count)
-    }
-
 }
