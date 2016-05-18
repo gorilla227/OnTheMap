@@ -1,0 +1,61 @@
+//
+//  ListVC.swift
+//  OnTheMap
+//
+//  Created by Andy on 16/5/17.
+//  Copyright © 2016年 Andy Xu. All rights reserved.
+//
+
+import UIKit
+
+class ListVC: UITableViewController {
+
+    let parse = ParseAPI.sharedInstance()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    // MARK: - Table view data source
+
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        // #warning Incomplete implementation, return the number of sections
+        return 1
+    }
+
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // #warning Incomplete implementation, return the number of rows
+        if let studentLocations = parse.studentLocations {
+            return studentLocations.count
+        } else {
+            return 0
+        }
+    }
+
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let CellIdentifier = "ListCell"
+        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier, forIndexPath: indexPath)
+
+        // Configure the cell...
+        let cellData = parse.studentLocations![indexPath.row]
+        let name = cellData.firstName + " " + cellData.lastName
+
+        cell.textLabel?.text = name
+        
+        return cell
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tabBarController?.selectedIndex = 0
+        let mapVC = tabBarController?.viewControllers![0] as! MapVC
+        let mapPins = mapVC.mapView.annotations as! [MapPin]
+        let selectedMapPin = parse.studentLocations![indexPath.row]
+        for mapPin in mapPins {
+            if mapPin.studentLocation == selectedMapPin {
+                mapVC.mapView.selectAnnotation(mapPin, animated: true)
+                return
+            }
+        }
+    }
+
+}

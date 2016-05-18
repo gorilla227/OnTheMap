@@ -13,7 +13,6 @@ import MapKit
 class MapVC: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     
-    let udacity = UdacityAPI.sharedInstance()
     let parse = ParseAPI.sharedInstance()
 
     override func viewDidLoad() {
