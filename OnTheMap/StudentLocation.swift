@@ -11,18 +11,18 @@ import CoreLocation
 
 struct StudentLocation {
     // MARK: Properties
-    let objectID: String
-    let uniqueKey: String?
-    let firstName: String
-    let lastName: String
-    let mapString: String?
-    let mediaURL: String?
-    let location: CLLocation
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let acl: AnyObject?
+    var objectID: String
+    var uniqueKey: String?
+    var firstName: String
+    var lastName: String
+    var mapString: String?
+    var mediaURL: String?
+    var location: CLLocation
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var acl: AnyObject?
     
-    let dateFormatter: NSDateFormatter = {
+    static let dateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
         return dateFormatter
@@ -38,9 +38,9 @@ struct StudentLocation {
         mediaURL = dictionary[ObjectKeys.MediaURL] as? String
         location = CLLocation(latitude: dictionary[ObjectKeys.Latitude] as! Double, longitude: dictionary[ObjectKeys.Longitude] as! Double)
         
-        createdAt = dateFormatter.dateFromString(dictionary[ObjectKeys.CreateAt] as! String)!
+        createdAt = StudentLocation.dateFormatter.dateFromString(dictionary[ObjectKeys.CreateAt] as! String)!
         if let updatedAtString = dictionary[ObjectKeys.UpdatedAt] as? String {
-            if let updateDate = dateFormatter.dateFromString(updatedAtString) {
+            if let updateDate = StudentLocation.dateFormatter.dateFromString(updatedAtString) {
                 updatedAt = updateDate
             } else {
                 updatedAt = nil

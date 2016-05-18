@@ -74,26 +74,24 @@ class AddMyLinkVC: UIViewController {
         
         print("Submit Parameters: \(parameters)")
         
-        if let myLocation = parse.myLocation {
+        if parse.myLocation != nil {
             // Update Student Location
-            parse.updateStudentLocation(myLocation, parameters: parameters, completionHandler: { (result, error) in
-                guard error == nil else {
+            parse.updateStudentLocation(parameters, completionHandler: { (success, error) in
+                guard error == nil && success else {
                     print("Updated My Location error: \(error?.domain), \(error?.localizedDescription)")
                     return
                 }
                 
-                self.parse.myLocation = result
                 self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
             })
         } else {
             // Add Student Location
-            parse.addStudentLocation(parameters) { (result, error) in
-                guard error == nil else {
+            parse.addStudentLocation(parameters) { (success, error) in
+                guard error == nil && success else {
                     print("Added My Location error: \(error?.domain), \(error?.localizedDescription)")
                     return
                 }
                 
-                self.parse.myLocation = result
                 self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
             }
         }
@@ -102,17 +100,6 @@ class AddMyLinkVC: UIViewController {
     @IBAction func cancelButtonOnClicked(sender: AnyObject) {
         navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 extension AddMyLinkVC: UITextFieldDelegate {

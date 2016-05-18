@@ -20,14 +20,21 @@ class MapVC: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(reloadMyLocation), name: "", object: nil)
     }
     
-//    func cleanMapPins() {
-//        mapView.removeAnnotations(mapView.annotations)
-//    }
+    deinit{
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func cleanMapPins() {
+        performUIUpdatesOnMain { 
+            self.mapView.removeAnnotations(self.mapView.annotations)
+        }
+    }
     
     func loadMapPin() {
+        cleanMapPins()
         // Add new return annotations
         for studentLocation in parse.studentLocations! {
             performUIUpdatesOnMain({
@@ -41,6 +48,24 @@ class MapVC: UIViewController, MKMapViewDelegate {
             performUIUpdatesOnMain({ 
                 let annotation = MapPin(rawData: myLocation)
                 self.mapView.addAnnotation(annotation)
+            })
+        }
+    }
+    
+    func reloadMyLocation() {
+        if let myLocation = parse.myLocation {
+            for annotation in mapView.annotations {
+                if let mapPin = annotation as? MapPin {
+                    if mapPin.studentLocation == myLocation {
+                        performUIUpdatesOnMain({ 
+                            self.mapView.removeAnnotation(mapPin)
+                        })
+                        break
+                    }
+                }
+            }
+            performUIUpdatesOnMain({
+                self.mapView.addAnnotation(MapPin(rawData: myLocation))
             })
         }
     }
@@ -70,14 +95,8 @@ class MapVC: UIViewController, MKMapViewDelegate {
         }
     }
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    @IBAction func debugButtonOnClicked(sender: AnyObject) {
+        print(mapView.annotations.count)
     }
-    */
 
 }

@@ -22,9 +22,6 @@ class MainTabBarVC: UITabBarController {
         // Do any additional setup after loading the view.
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
-    }
-    
-    override func viewDidAppear(animated: Bool) {
         requestStudentLocations(nil)
     }
     
@@ -114,7 +111,7 @@ class MainTabBarVC: UITabBarController {
     }
     
     @IBAction func refreshMapPinsButtonOnClicked(sender: AnyObject) {
-//        requestStudentLocations(nil)
+        requestStudentLocations(nil)
     }
 
 }
