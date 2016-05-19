@@ -42,7 +42,6 @@ class MainTabBarVC: UITabBarController {
                 print(error?.domain, error?.localizedDescription)
             }
             
-            self.parse.myLocation = result
             self.removeMyLocationFromList()
             self.loadMapPinsForSubViewControllers()
         }

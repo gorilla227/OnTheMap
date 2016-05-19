@@ -19,7 +19,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(reloadMyLocation), name: "", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(reloadMyLocation), name: MapPin.LocationAddedUpdatedNotification, object: nil)
     }
     
     deinit{
@@ -27,9 +27,9 @@ class MapVC: UIViewController, MKMapViewDelegate {
     }
     
     func cleanMapPins() {
-        performUIUpdatesOnMain { 
+        performUIUpdatesOnMain({
             self.mapView.removeAnnotations(self.mapView.annotations)
-        }
+        })
     }
     
     func loadMapPin() {
@@ -47,6 +47,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
             performUIUpdatesOnMain({ 
                 let annotation = MapPin(rawData: myLocation)
                 self.mapView.addAnnotation(annotation)
+                self.mapView.selectAnnotation(annotation, animated: true)
             })
         }
     }
@@ -56,15 +57,16 @@ class MapVC: UIViewController, MKMapViewDelegate {
             for annotation in mapView.annotations {
                 if let mapPin = annotation as? MapPin {
                     if mapPin.studentLocation == myLocation {
-                        performUIUpdatesOnMain({ 
+                        performUIUpdatesOnMain({
                             self.mapView.removeAnnotation(mapPin)
                         })
-                        break
                     }
                 }
             }
             performUIUpdatesOnMain({
-                self.mapView.addAnnotation(MapPin(rawData: myLocation))
+                let myLocationAnnotation = MapPin(rawData: myLocation)
+                self.mapView.addAnnotation(myLocationAnnotation)
+                self.mapView.selectAnnotation(myLocationAnnotation, animated: true)
             })
         }
     }

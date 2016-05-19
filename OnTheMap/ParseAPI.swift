@@ -70,6 +70,7 @@ class ParseAPI: NSObject {
                 let studentLocationDictionary = results.first
                 let studentLocation = StudentLocation(dictionary: studentLocationDictionary!)
                 print(studentLocationDictionary)
+                self.myLocation = studentLocation
                 completionHandler(result: studentLocation, error: nil)
             } else {
                 completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Not get correct student location"]))
@@ -106,16 +107,16 @@ class ParseAPI: NSObject {
                 return
             }
             
-            var dictionary = parameters
+            
             guard let createdAt = result[Constants.ResponseKeys.CreatedAt] as? String, let objectID = result[Constants.ResponseKeys.ObjectID] else {
                 completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find CreatedAt and ObjectID in response"]))
                 return
             }
             
+            var dictionary = parameters
             dictionary[StudentLocation.ObjectKeys.CreateAt] = createdAt
             dictionary[StudentLocation.ObjectKeys.ObjectID] = objectID
-            let studentLocation = StudentLocation(dictionary: dictionary)
-            self.myLocation = studentLocation
+            self.myLocation = StudentLocation(dictionary: dictionary)
             
             completionHandler(success: true, error: nil)
         }
@@ -156,8 +157,12 @@ class ParseAPI: NSObject {
                 completionHandler(success: false, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't find updatedAt in response"]))
                 return
             }
-            print("Update Result: \(result)")
-            self.myLocation?.updatedAt = StudentLocation.dateFormatter.dateFromString(updatedAt)
+        
+            var dictionary = parameters
+            dictionary[StudentLocation.ObjectKeys.UpdatedAt] = updatedAt
+            dictionary[StudentLocation.ObjectKeys.ObjectID] = self.myLocation?.objectID
+            dictionary[StudentLocation.ObjectKeys.CreateAt] = StudentLocation.dateFormatter.stringFromDate((self.myLocation?.createdAt)!)
+            self.myLocation = StudentLocation(dictionary: dictionary)
             
             completionHandler(success: true, error: nil)
         }
@@ -207,7 +212,7 @@ extension ParseAPI {
         request.addValue(Constants.Base.APIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
         
         switch httpMethod {
-        case .POST:
+        case .POST, .PUT:
             request.addValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             if let httpBody = httpBody {

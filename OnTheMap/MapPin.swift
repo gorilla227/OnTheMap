@@ -11,6 +11,7 @@ import CoreLocation
 import MapKit
 
 class MapPin: NSObject, MKAnnotation {
+    static let LocationAddedUpdatedNotification = "LocationAddedUpdatedNotification"
     let studentLocation: StudentLocation?
     var coordinate: CLLocationCoordinate2D
     var title: String?

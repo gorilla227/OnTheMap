@@ -82,6 +82,7 @@ class AddMyLinkVC: UIViewController {
                     return
                 }
                 
+                NSNotificationCenter.defaultCenter().postNotificationName(MapPin.LocationAddedUpdatedNotification, object: nil)
                 self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
             })
         } else {
@@ -92,6 +93,7 @@ class AddMyLinkVC: UIViewController {
                     return
                 }
                 
+                NSNotificationCenter.defaultCenter().postNotificationName(MapPin.LocationAddedUpdatedNotification, object: nil)
                 self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
             }
         }
