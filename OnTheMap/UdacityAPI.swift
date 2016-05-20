@@ -261,12 +261,21 @@ extension UdacityAPI {
     private func createDataTaskWithRequest(request: NSURLRequest, errorDomain: String, completionHandler: (result: AnyObject?, error: NSError?) -> Void) -> NSURLSessionDataTask {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
             guard error == nil else {
-                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns error: \(error?.localizedDescription)"]))
+                completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns error: \((error?.localizedDescription)!)"]))
                 return
             }
             
-            guard let statusCode: Int = (response as? NSHTTPURLResponse)!.statusCode where statusCode >= 200 && statusCode < 300 else {
+            guard let statusCode: Int = (response as? NSHTTPURLResponse)!.statusCode else {
                 completionHandler(result: nil, error: NSError(domain: errorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Request returns un-successful StatusCode"]))
+                return
+            }
+            
+            guard statusCode >= 200 && statusCode < 300 else {
+                if statusCode == 401 || statusCode == 403 {
+                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: statusCode, userInfo: [NSLocalizedDescriptionKey: "Wrong email or password"]))
+                } else {
+                    completionHandler(result: nil, error: NSError(domain: errorDomain, code: statusCode, userInfo: [NSLocalizedDescriptionKey: "Request returns un-successful StatusCode"]))
+                }
                 return
             }
             

@@ -30,31 +30,46 @@ class LoginVC: UIViewController {
         if FBSDKAccessToken.currentAccessToken() != nil {
             
             // Create Session with Facebook Authentication
-            stopInteraction(true, runInBackground: false)
+            stopInteraction(true, runInBackground: false, completionHandler: nil)
             udacity.createSessionWithFacebookAuthentication(FBSDKAccessToken.currentAccessToken().tokenString, completionHandler: { (success, error) in
                 guard error == nil && success else {
                     print(error?.domain, error?.localizedDescription)
-                    self.stopInteraction(false, runInBackground: false)
+                    self.stopInteraction(false, runInBackground: true, completionHandler: { 
+                        self.showAlert(error)
+                    })
+                    
                     return
                 }
-                
                 // Get Public User Data
                 self.udacity.getPublicUserData(self.udacity.accountID!, completionHandler: { (result, error) in
                     
                     guard error == nil else {
                         print(error?.domain, error?.localizedDescription)
-                        self.stopInteraction(false, runInBackground: false)
+                        self.stopInteraction(false, runInBackground: true, completionHandler: {
+                            self.showAlert(error)
+                        })
                         return
                     }
                     
-                    self.completeLogin()
-                    self.stopInteraction(false, runInBackground: true)
+                    self.stopInteraction(false, runInBackground: true, completionHandler: {
+                        self.completeLogin()
+                    })
                 })
             })
         }
     }
     
-    func completeLogin() {
+    // MARK: Private Functions
+    private func showAlert(error: NSError?) {
+        let alertView = UIAlertController(title: nil, message: error?.localizedDescription ?? "Unknown Error", preferredStyle: .Alert)
+        let cancelAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+        alertView.addAction(cancelAction)
+        presentViewController(alertView, animated: true, completion: nil)
+    }
+    
+    private func completeLogin() {
+        emailTextField.text = nil
+        passwordTextField.text = nil
         performSegueWithIdentifier("CompleteLogin", sender: self)
     }
     
@@ -66,7 +81,7 @@ class LoginVC: UIViewController {
         facebookLoginButton.enabled = enable
     }
     
-    private func stopInteraction(shouldStop: Bool, runInBackground: Bool) {
+    private func stopInteraction(shouldStop: Bool, runInBackground: Bool, completionHandler: (() -> Void)?) {
         func action(shouldStop: Bool) {
             if shouldStop {
                 self.setEnableUI(false)
@@ -74,6 +89,9 @@ class LoginVC: UIViewController {
             } else {
                 self.setEnableUI(true)
                 self.activityIndicator.stopAnimating()
+            }
+            if completionHandler != nil {
+                completionHandler!()
             }
         }
         
@@ -90,14 +108,16 @@ class LoginVC: UIViewController {
     // MARK: IBActions
 
     @IBAction func loginButtonOnClicked(sender: AnyObject) {
-        stopInteraction(true, runInBackground: false)
+        stopInteraction(true, runInBackground: false, completionHandler: nil)
         
         // Create Session
         udacity.createSession(emailTextField.text!, password: passwordTextField.text!, completionHandler: { (success, error) in
             
             guard error == nil && success else {
                 print(error?.domain, error?.localizedDescription)
-                self.stopInteraction(false, runInBackground: false)
+                self.stopInteraction(false, runInBackground: true, completionHandler: {
+                    self.showAlert(error)
+                })
                 return
             }
 
@@ -106,12 +126,15 @@ class LoginVC: UIViewController {
                 
                 guard error == nil else {
                     print(error?.domain, error?.localizedDescription)
-                    self.stopInteraction(false, runInBackground: false)
+                    self.stopInteraction(false, runInBackground: true, completionHandler: {
+                        self.showAlert(error)
+                    })
                     return
                 }
                 
-                self.completeLogin()
-                self.stopInteraction(false, runInBackground: true)
+                self.stopInteraction(false, runInBackground: true, completionHandler: {
+                    self.completeLogin()
+                })
             })
         })
     }
@@ -176,14 +199,16 @@ extension LoginVC: UITextFieldDelegate {
 extension LoginVC: FBSDKLoginButtonDelegate {
     func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {
         if !result.isCancelled {
-            stopInteraction(true, runInBackground: true)
+            stopInteraction(true, runInBackground: true, completionHandler: nil)
             if result.grantedPermissions.contains("email") {
                 print(result.token.tokenString)
                 // Create Session with Facebook Authentication
                 self.udacity.createSessionWithFacebookAuthentication(result.token.tokenString, completionHandler: { (success, error) in
                     guard error == nil && success else {
                         print(error?.domain, error?.localizedDescription)
-                        self.stopInteraction(false, runInBackground: false)
+                        self.stopInteraction(false, runInBackground: true, completionHandler: {
+                            self.showAlert(error)
+                        })
                         return
                     }
                     
@@ -192,12 +217,15 @@ extension LoginVC: FBSDKLoginButtonDelegate {
                         
                         guard error == nil else {
                             print(error?.domain, error?.localizedDescription)
-                            self.stopInteraction(false, runInBackground: false)
+                            self.stopInteraction(false, runInBackground: true, completionHandler: {
+                                self.showAlert(error)
+                            })
                             return
                         }
                         
-                        self.completeLogin()
-                        self.stopInteraction(false, runInBackground: true)
+                        self.stopInteraction(false, runInBackground: true, completionHandler: {
+                            self.completeLogin()
+                        })
                     })
                 })
             }
@@ -205,13 +233,17 @@ extension LoginVC: FBSDKLoginButtonDelegate {
     }
     
     func loginButtonDidLogOut(loginButton: FBSDKLoginButton!) {
-        stopInteraction(true, runInBackground: false)
+        stopInteraction(true, runInBackground: false, completionHandler: nil)
         udacity.deleteSession { (result, error) in
-            self.stopInteraction(false, runInBackground: true)
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
+                self.stopInteraction(false, runInBackground: true, completionHandler: {
+                    self.showAlert(error)
+                })
                 return
             }
+            
+            self.stopInteraction(false, runInBackground: true, completionHandler: nil)
         }
     }
 }
