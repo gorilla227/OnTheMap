@@ -20,7 +20,7 @@ class ParseAPI: NSObject {
         let errorDomain = "getStudentLocations"
         
         // 1. Create Request
-        let request = generateRequest(HTTPMethodType.GET, requestMethod: Constants.Methods.GETingStudentLocations, parameters: nil, httpBody: nil)
+        let request = generateRequest(HTTPMethodType.GET, requestMethod: Constants.Methods.GETingStudentLocations, parameters: parameters, httpBody: nil)
         
         // 2. Create Task
         let task = createDataTaskWithRequest(request, errorDomain: errorDomain) {(result, error) in

@@ -42,6 +42,7 @@ class ListVC: UITableViewController {
 
         cell.textLabel?.text = name
         
+        print(cellData.updatedAt)
         return cell
     }
     

@@ -22,7 +22,10 @@ class MainTabBarVC: UITabBarController {
         // Do any additional setup after loading the view.
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
-        requestStudentLocations(nil)
+        
+        // Request StudentLocations
+        let parameters = [ParseAPI.Constants.ParameterKeys.Order: "-" + StudentLocation.ObjectKeys.UpdatedAt]
+        requestStudentLocations(parameters)
     }
     
     // MARK: Private Functions
@@ -124,7 +127,8 @@ class MainTabBarVC: UITabBarController {
     }
     
     @IBAction func refreshMapPinsButtonOnClicked(sender: AnyObject) {
-        requestStudentLocations(nil)
+        let parameters = [ParseAPI.Constants.ParameterKeys.Order: "-" + StudentLocation.ObjectKeys.UpdatedAt]
+        requestStudentLocations(parameters)
     }
 
 }
