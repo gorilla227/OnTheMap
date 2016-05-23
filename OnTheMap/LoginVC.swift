@@ -34,9 +34,7 @@ class LoginVC: UIViewController {
             udacity.createSessionWithFacebookAuthentication(FBSDKAccessToken.currentAccessToken().tokenString, completionHandler: { (success, error) in
                 guard error == nil && success else {
                     print(error?.domain, error?.localizedDescription)
-                    self.stopInteraction(false, runInBackground: true, completionHandler: { 
-                        self.showAlert(error)
-                    })
+                    self.showAlert(error)
                     
                     return
                 }
@@ -45,9 +43,7 @@ class LoginVC: UIViewController {
                     
                     guard error == nil else {
                         print(error?.domain, error?.localizedDescription)
-                        self.stopInteraction(false, runInBackground: true, completionHandler: {
-                            self.showAlert(error)
-                        })
+                        self.showAlert(error)
                         return
                     }
                     
@@ -61,10 +57,12 @@ class LoginVC: UIViewController {
     
     // MARK: Private Functions
     private func showAlert(error: NSError?) {
-        let alertView = UIAlertController(title: nil, message: error?.localizedDescription ?? "Unknown Error", preferredStyle: .Alert)
-        let cancelAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
-        alertView.addAction(cancelAction)
-        presentViewController(alertView, animated: true, completion: nil)
+        stopInteraction(false, runInBackground: true) { 
+            let alertView = UIAlertController(title: nil, message: error?.localizedDescription ?? "Unknown Error", preferredStyle: .Alert)
+            let cancelAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+            alertView.addAction(cancelAction)
+            self.presentViewController(alertView, animated: true, completion: nil)
+        }
     }
     
     private func completeLogin() {
@@ -115,9 +113,7 @@ class LoginVC: UIViewController {
             
             guard error == nil && success else {
                 print(error?.domain, error?.localizedDescription)
-                self.stopInteraction(false, runInBackground: true, completionHandler: {
-                    self.showAlert(error)
-                })
+                self.showAlert(error)
                 return
             }
 
@@ -126,9 +122,7 @@ class LoginVC: UIViewController {
                 
                 guard error == nil else {
                     print(error?.domain, error?.localizedDescription)
-                    self.stopInteraction(false, runInBackground: true, completionHandler: {
-                        self.showAlert(error)
-                    })
+                    self.showAlert(error)
                     return
                 }
                 
@@ -206,9 +200,7 @@ extension LoginVC: FBSDKLoginButtonDelegate {
                 self.udacity.createSessionWithFacebookAuthentication(result.token.tokenString, completionHandler: { (success, error) in
                     guard error == nil && success else {
                         print(error?.domain, error?.localizedDescription)
-                        self.stopInteraction(false, runInBackground: true, completionHandler: {
-                            self.showAlert(error)
-                        })
+                        self.showAlert(error)
                         return
                     }
                     
@@ -217,9 +209,7 @@ extension LoginVC: FBSDKLoginButtonDelegate {
                         
                         guard error == nil else {
                             print(error?.domain, error?.localizedDescription)
-                            self.stopInteraction(false, runInBackground: true, completionHandler: {
-                                self.showAlert(error)
-                            })
+                            self.showAlert(error)
                             return
                         }
                         
@@ -237,9 +227,7 @@ extension LoginVC: FBSDKLoginButtonDelegate {
         udacity.deleteSession { (result, error) in
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
-                self.stopInteraction(false, runInBackground: true, completionHandler: {
-                    self.showAlert(error)
-                })
+                self.showAlert(error)
                 return
             }
             
