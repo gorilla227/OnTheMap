@@ -46,6 +46,7 @@ class ListVC: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        /* Switch to MapView and select annotation
         tabBarController?.selectedIndex = 0
         let mapVC = tabBarController?.viewControllers![0] as! MapVC
         let mapPins = mapVC.mapView.annotations as! [MapPin]
@@ -54,6 +55,17 @@ class ListVC: UITableViewController {
             if mapPin.studentLocation == selectedMapPin {
                 mapVC.mapView.selectAnnotation(mapPin, animated: true)
                 return
+            }
+        }
+        */
+        
+        let selectedStudentLocation = parse.studentLocations![indexPath.row]
+        if var mediaURLString = selectedStudentLocation.mediaURL {
+            if !mediaURLString.hasPrefix("http") {
+                mediaURLString = "http://" + mediaURLString
+            }
+            if let mediaURL = NSURL(string: mediaURLString) {
+                UIApplication.sharedApplication().openURL(mediaURL)
             }
         }
     }
