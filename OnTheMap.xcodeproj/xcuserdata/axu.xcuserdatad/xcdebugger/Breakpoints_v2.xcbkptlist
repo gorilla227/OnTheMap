@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OnTheMap/LoginVC.swift"
-            timestampString = "485395880.00652"
+            timestampString = "485722277.27042"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "376"
-            endingLineNumber = "376"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
             landmarkName = "LoginVC"
             landmarkType = "3">
          </BreakpointContent>

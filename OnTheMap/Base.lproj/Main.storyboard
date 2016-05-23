@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -394,11 +394,16 @@ today?</string>
                                     <action selector="sumbitButtonOnClicked:" destination="wYQ-3P-7bp" eventType="touchUpInside" id="t2O-tp-aEA"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="cd0-yI-yzI">
+                                <rect key="frame" x="282" y="281" width="37" height="37"/>
+                                <color key="color" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="PeH-wf-uvj" firstAttribute="top" secondItem="4Ky-5s-wVb" secondAttribute="bottom" constant="66" id="4v0-7c-KLH"/>
                             <constraint firstItem="PeH-wf-uvj" firstAttribute="top" secondItem="nfr-Yn-6Ip" secondAttribute="bottom" id="7Kc-jg-VEj"/>
+                            <constraint firstItem="cd0-yI-yzI" firstAttribute="centerY" secondItem="ObA-hB-iEb" secondAttribute="centerY" id="9wT-FB-6vR"/>
                             <constraint firstItem="nfr-Yn-6Ip" firstAttribute="height" secondItem="ObA-hB-iEb" secondAttribute="height" multiplier="2:3" id="ADd-Pm-wTG"/>
                             <constraint firstAttribute="leadingMargin" secondItem="ZG2-0p-VOK" secondAttribute="leading" constant="20" id="TRD-4L-TQm"/>
                             <constraint firstItem="4Ky-5s-wVb" firstAttribute="centerX" secondItem="ObA-hB-iEb" secondAttribute="centerX" id="ZMo-lQ-p96"/>
@@ -409,6 +414,7 @@ today?</string>
                             <constraint firstItem="nfr-Yn-6Ip" firstAttribute="top" secondItem="ZG2-0p-VOK" secondAttribute="bottom" id="gE8-j1-xNd"/>
                             <constraint firstAttribute="trailingMargin" secondItem="nfr-Yn-6Ip" secondAttribute="trailing" constant="-20" id="iTL-u3-sy8"/>
                             <constraint firstItem="ZG2-0p-VOK" firstAttribute="height" secondItem="ObA-hB-iEb" secondAttribute="height" multiplier="1:3" id="mrV-0q-eXv"/>
+                            <constraint firstItem="cd0-yI-yzI" firstAttribute="centerX" secondItem="ObA-hB-iEb" secondAttribute="centerX" id="qKD-Yl-FbJ"/>
                             <constraint firstItem="PeH-wf-uvj" firstAttribute="top" secondItem="nfr-Yn-6Ip" secondAttribute="bottom" id="s6L-je-n9a"/>
                             <constraint firstItem="4Ky-5s-wVb" firstAttribute="width" secondItem="ObA-hB-iEb" secondAttribute="width" multiplier="1:3" id="vvy-F9-OI2"/>
                         </constraints>
@@ -430,6 +436,7 @@ today?</string>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="activityIndicator" destination="cd0-yI-yzI" id="ZS1-lB-I2k"/>
                         <outlet property="linkTextField" destination="ZG2-0p-VOK" id="NIW-J6-aO8"/>
                         <outlet property="mapView" destination="nfr-Yn-6Ip" id="ptZ-1k-w1x"/>
                         <outlet property="submitButton" destination="4Ky-5s-wVb" id="5IO-Dy-tz1"/>

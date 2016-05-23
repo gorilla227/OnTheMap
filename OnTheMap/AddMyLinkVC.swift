@@ -14,6 +14,7 @@ class AddMyLinkVC: UIViewController {
     @IBOutlet weak var linkTextField: UITextField!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var submitButton: RoundButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     // MARK: Properties
     var locationString: String?
@@ -59,6 +60,45 @@ class AddMyLinkVC: UIViewController {
         }
     }
     
+    // MARK: Private Fuctions
+    private func showAlert(error: NSError?) {
+        stopInteraction(false, runInBackground: true) {
+            let alertView = UIAlertController(title: nil, message: error?.localizedDescription ?? "Unknown Error", preferredStyle: .Alert)
+            let cancelAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+            alertView.addAction(cancelAction)
+            self.presentViewController(alertView, animated: true, completion: nil)
+        }
+    }
+    
+    private func setEnableUI(enable: Bool) {
+        linkTextField.enabled = enable
+        submitButton.enabled = enable
+    }
+    
+    private func stopInteraction(shouldStop: Bool, runInBackground: Bool, completionHandler: (() -> Void)?) {
+        func action(shouldStop: Bool) {
+            if shouldStop {
+                self.setEnableUI(false)
+                self.activityIndicator.startAnimating()
+            } else {
+                self.setEnableUI(true)
+                self.activityIndicator.stopAnimating()
+            }
+            if completionHandler != nil {
+                completionHandler!()
+            }
+        }
+        
+        
+        if runInBackground {
+            performUIUpdatesOnMain {
+                action(shouldStop)
+            }
+        } else {
+            action(shouldStop)
+        }
+    }
+    
     // MARK: IBActions
     
     @IBAction func sumbitButtonOnClicked(sender: AnyObject) {
@@ -74,11 +114,13 @@ class AddMyLinkVC: UIViewController {
         
         print("Submit Parameters: \(parameters)")
         
+        activityIndicator.startAnimating()
         if parse.myLocation != nil {
             // Update Student Location
             parse.updateStudentLocation(parameters, completionHandler: { (success, error) in
                 guard error == nil && success else {
                     print("Updated My Location error: \(error?.domain), \(error?.localizedDescription)")
+                    self.showAlert(error)
                     return
                 }
                 
@@ -90,6 +132,7 @@ class AddMyLinkVC: UIViewController {
             parse.addStudentLocation(parameters) { (success, error) in
                 guard error == nil && success else {
                     print("Added My Location error: \(error?.domain), \(error?.localizedDescription)")
+                    self.showAlert(error)
                     return
                 }
                 

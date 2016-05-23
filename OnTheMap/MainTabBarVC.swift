@@ -25,10 +25,21 @@ class MainTabBarVC: UITabBarController {
         requestStudentLocations(nil)
     }
     
+    // MARK: Private Functions
+    
+    private func showAlert(error: NSError?) {
+        activityIndicator.stopAnimating()
+        let alertView = UIAlertController(title: nil, message: error?.localizedDescription ?? "Unknown Error", preferredStyle: .Alert)
+        let cancelAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+        alertView.addAction(cancelAction)
+        presentViewController(alertView, animated: true, completion: nil)
+    }
+    
     private func requestStudentLocations(parameters: [String: AnyObject]?) {
         parse.getStudentLocations(parameters) { (result, error) in
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
+                self.showAlert(error)
                 return
             }
             
@@ -38,8 +49,10 @@ class MainTabBarVC: UITabBarController {
     
     private func queryMyLocation() {
         parse.queryStudentLocation(udacity.accountID!) { (result, error) in
-            if error != nil {
+            guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
+                self.showAlert(error)
+                return
             }
             
             self.removeMyLocationFromList()
@@ -78,6 +91,7 @@ class MainTabBarVC: UITabBarController {
             self.activityIndicator.stopAnimating()
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
+                self.showAlert(error)
                 return
             }
                 
