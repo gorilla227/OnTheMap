@@ -25,6 +25,16 @@ class MainTabBarVC: UITabBarController {
         view.addSubview(activityIndicator)
         
         // Request StudentLocations
+        reloadMyLocation()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(reloadMyLocation), name: MapPin.LocationAddedUpdatedNotification, object: nil)
+    }
+    
+    deinit{
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func reloadMyLocation() {
         let parameters: [String: AnyObject] = [
             ParseAPI.Constants.ParameterKeys.Order: "-" + StudentLocation.ObjectKeys.UpdatedAt,
             ParseAPI.Constants.ParameterKeys.Limit: "100"
@@ -76,8 +86,10 @@ class MainTabBarVC: UITabBarController {
     
     private func loadMapPinsForSubViewControllers() {
         for viewController in self.viewControllers! {
-            if let mapVC = viewController as? MapVC where viewController.isKindOfClass(MapVC) {
+            if let mapVC = viewController as? MapVC {
                 mapVC.loadMapPin()
+            } else if let listVC = viewController as? ListVC {
+                listVC.tableView.reloadData()
             }
         }
     }
@@ -138,11 +150,7 @@ class MainTabBarVC: UITabBarController {
     }
     
     @IBAction func refreshMapPinsButtonOnClicked(sender: AnyObject) {
-        let parameters: [String: AnyObject] = [
-            ParseAPI.Constants.ParameterKeys.Order: "-" + StudentLocation.ObjectKeys.UpdatedAt,
-            ParseAPI.Constants.ParameterKeys.Limit: "100"
-        ]
-        requestStudentLocations(parameters)
+        reloadMyLocation()
     }
 
 }
