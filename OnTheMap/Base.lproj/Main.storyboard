@@ -321,7 +321,7 @@ today?</string>
                                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                 <state key="normal" title="Find on the Map"/>
                                                 <connections>
-                                                    <segue destination="wYQ-3P-7bp" kind="show" identifier="FindLocationAndAddLink" id="vil-v6-Msv"/>
+                                                    <action selector="findOnTheMapButtonOnClicked:" destination="f93-Or-aE6" eventType="touchUpInside" id="Muw-q6-XPO"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -333,11 +333,17 @@ today?</string>
                                     </view>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="6fU-Lh-fDk">
+                                <rect key="frame" x="282" y="281" width="37" height="37"/>
+                                <color key="color" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="dIh-SD-mTi" firstAttribute="leading" secondItem="HSp-bo-aAr" secondAttribute="leadingMargin" constant="-20" id="2Pa-ti-SWb"/>
                             <constraint firstItem="lhG-4I-QCn" firstAttribute="top" secondItem="dIh-SD-mTi" secondAttribute="bottom" id="ICu-5W-bzj"/>
+                            <constraint firstItem="6fU-Lh-fDk" firstAttribute="centerY" secondItem="HSp-bo-aAr" secondAttribute="centerY" id="YVg-7o-iBU"/>
+                            <constraint firstItem="6fU-Lh-fDk" firstAttribute="centerX" secondItem="HSp-bo-aAr" secondAttribute="centerX" id="e8s-7H-DuC"/>
                             <constraint firstAttribute="trailingMargin" secondItem="dIh-SD-mTi" secondAttribute="trailing" constant="-20" id="hEx-WA-AUu"/>
                             <constraint firstItem="dIh-SD-mTi" firstAttribute="top" secondItem="dY1-Vi-aig" secondAttribute="bottom" id="mw6-Hm-sfF"/>
                         </constraints>
@@ -350,9 +356,11 @@ today?</string>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="activityIndicator" destination="6fU-Lh-fDk" id="cQJ-Uo-2BB"/>
                         <outlet property="findOnTheMapButton" destination="pfG-ut-VKF" id="4WG-ZM-gor"/>
                         <outlet property="locationTextField" destination="NaO-Tw-nYU" id="2Jk-qV-Cke"/>
                         <outlet property="titleLabel" destination="oeh-qi-etW" id="kN7-Mp-3K4"/>
+                        <segue destination="wYQ-3P-7bp" kind="show" identifier="FindLocationAndAddLink" id="h0i-cg-HFx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J6n-NC-JKg" userLabel="First Responder" sceneMemberID="firstResponder"/>

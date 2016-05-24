@@ -87,7 +87,6 @@ class UdacityAPI: NSObject {
                 Constants.ParameterKeys.FacebookAccessToken: facebookAccessToken
             ]
         ]
-        print(facebookAccessToken)
         
         let httpBody: NSData?
         do {

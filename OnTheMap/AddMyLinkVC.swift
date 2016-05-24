@@ -18,7 +18,7 @@ class AddMyLinkVC: UIViewController {
     
     // MARK: Properties
     var locationString: String?
-    var location: CLLocationCoordinate2D?
+    var mapPin: MapPin?
     let udacity = UdacityAPI.sharedInstance()
     let parse = ParseAPI.sharedInstance()
 
@@ -27,36 +27,16 @@ class AddMyLinkVC: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        findLocationAndAddToMap()
+        addMapPinToMap()
     }
     
-    func findLocationAndAddToMap() {
-        if let locationString = self.locationString {
-            let localSearchRequest = MKLocalSearchRequest()
-            localSearchRequest.naturalLanguageQuery = locationString
-            let localSearch = MKLocalSearch(request: localSearchRequest)
-            localSearch.startWithCompletionHandler({ (localSearchResponse, error) in
-                guard error == nil else {
-                    print("Search Location: \(error?.domain), \(error?.localizedDescription)")
-                    return
-                }
-                
-                if let localSearchResponse = localSearchResponse where localSearchResponse.mapItems.count > 0 {
-                    let mapItem = localSearchResponse.mapItems.first
-                    
-                    if let location = mapItem?.placemark.coordinate {
-                        self.location = location
-                        let mapPin = MapPin(onlyLocation: location)
-                        self.mapView.addAnnotation(mapPin)
-                        
-                        let coordinateSpan = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-                        let coordinateRegion = MKCoordinateRegion(center: location, span: coordinateSpan)
-                        self.mapView.setRegion(coordinateRegion, animated: true)
-                    }
-                    
-                }
-            })
+    func addMapPinToMap() {
+        if let mapPin = mapPin {
+            mapView.addAnnotation(mapPin)
             
+            let coordinateSpan = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+            let coordinateRegion = MKCoordinateRegion(center: mapPin.coordinate, span: coordinateSpan)
+            mapView.setRegion(coordinateRegion, animated: true)
         }
     }
     
@@ -77,6 +57,7 @@ class AddMyLinkVC: UIViewController {
     
     private func stopInteraction(shouldStop: Bool, runInBackground: Bool, completionHandler: (() -> Void)?) {
         func action(shouldStop: Bool) {
+            
             if shouldStop {
                 self.setEnableUI(false)
                 self.activityIndicator.startAnimating()
@@ -108,13 +89,13 @@ class AddMyLinkVC: UIViewController {
             StudentLocation.ObjectKeys.LastName: udacity.accountData![UdacityAPI.Constants.ResponseKeys.LastName]!,
             StudentLocation.ObjectKeys.MapString: locationString!,
             StudentLocation.ObjectKeys.MediaURL: linkTextField.text!,
-            StudentLocation.ObjectKeys.Latitude: (location?.latitude)!,
-            StudentLocation.ObjectKeys.Longitude: (location?.longitude)!
+            StudentLocation.ObjectKeys.Latitude: (mapPin?.coordinate.latitude)!,
+            StudentLocation.ObjectKeys.Longitude: (mapPin?.coordinate.longitude)!
         ]
         
         print("Submit Parameters: \(parameters)")
         
-        activityIndicator.startAnimating()
+        stopInteraction(true, runInBackground: false, completionHandler: nil)
         if parse.myLocation != nil {
             // Update Student Location
             parse.updateStudentLocation(parameters, completionHandler: { (success, error) in
@@ -124,8 +105,11 @@ class AddMyLinkVC: UIViewController {
                     return
                 }
                 
-                NSNotificationCenter.defaultCenter().postNotificationName(MapPin.LocationAddedUpdatedNotification, object: nil)
-                self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
+                self.stopInteraction(false, runInBackground: true, completionHandler: {
+                    NSNotificationCenter.defaultCenter().postNotificationName(MapPin.LocationAddedUpdatedNotification, object: nil)
+                    self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
+                })
+                
             })
         } else {
             // Add Student Location
@@ -136,8 +120,10 @@ class AddMyLinkVC: UIViewController {
                     return
                 }
                 
-                NSNotificationCenter.defaultCenter().postNotificationName(MapPin.LocationAddedUpdatedNotification, object: nil)
-                self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
+                self.stopInteraction(false, runInBackground: true, completionHandler: {
+                    NSNotificationCenter.defaultCenter().postNotificationName(MapPin.LocationAddedUpdatedNotification, object: nil)
+                    self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
+                })
             }
         }
     }

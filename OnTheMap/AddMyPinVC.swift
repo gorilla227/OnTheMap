@@ -7,17 +7,89 @@
 //
 
 import UIKit
+import MapKit
 
 class AddMyPinVC: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var locationTextField: UITextField!
     @IBOutlet weak var findOnTheMapButton: RoundButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
 
+    }
+    
+    func findLocationAndAddToMap() {
+        let localSearchRequest = MKLocalSearchRequest()
+        localSearchRequest.naturalLanguageQuery = locationTextField.text
+        let localSearch = MKLocalSearch(request: localSearchRequest)
+        
+        stopInteraction(true, runInBackground: false, completionHandler: nil)
+        localSearch.startWithCompletionHandler({ (localSearchResponse, error) in
+            guard error == nil else {
+                print("Search Location: \(error?.domain), \(error?.localizedDescription)")
+                self.showAlert(error)
+                return
+            }
+            
+            guard let localSearchResponse = localSearchResponse where localSearchResponse.mapItems.count > 0 else {
+                self.showAlert(NSError(domain: "Find location", code: 1, userInfo: [NSLocalizedDescriptionKey: "No result found"]))
+                return
+            }
+            
+            self.stopInteraction(false, runInBackground: true, completionHandler: { 
+                let mapItem = localSearchResponse.mapItems.first
+                
+                if let location = mapItem?.placemark.coordinate {
+                    let mapPin = MapPin(onlyLocation: location)
+                    
+                    self.performSegueWithIdentifier("FindLocationAndAddLink", sender: mapPin)
+                }
+            })
+        })
+    }
+    
+    // MARK: Private Fuctions
+    private func showAlert(error: NSError?) {
+        stopInteraction(false, runInBackground: true) {
+            let alertView = UIAlertController(title: nil, message: error?.localizedDescription ?? "Unknown Error", preferredStyle: .Alert)
+            let cancelAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+            alertView.addAction(cancelAction)
+            self.presentViewController(alertView, animated: true, completion: nil)
+        }
+    }
+    
+    private func setEnableUI(enable: Bool) {
+        locationTextField.enabled = enable
+        findOnTheMapButton.enabled = enable
+    }
+    
+    private func stopInteraction(shouldStop: Bool, runInBackground: Bool, completionHandler: (() -> Void)?) {
+        func action(shouldStop: Bool) {
+            
+            if shouldStop {
+                self.setEnableUI(false)
+                self.activityIndicator.startAnimating()
+            } else {
+                self.setEnableUI(true)
+                self.activityIndicator.stopAnimating()
+            }
+            if completionHandler != nil {
+                completionHandler!()
+            }
+        }
+        
+        
+        if runInBackground {
+            performUIUpdatesOnMain {
+                action(shouldStop)
+            }
+        } else {
+            action(shouldStop)
+        }
     }
     
     // MARK: Keyboard adjustment
@@ -57,6 +129,10 @@ class AddMyPinVC: UIViewController {
         navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
 
+    @IBAction func findOnTheMapButtonOnClicked(sender: AnyObject) {
+        findLocationAndAddToMap()
+    }
+    
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
@@ -64,11 +140,10 @@ class AddMyPinVC: UIViewController {
         if segue.identifier == "FindLocationAndAddLink" {
             if let destVC = segue.destinationViewController as? AddMyLinkVC {
                 destVC.locationString = locationTextField.text
+                destVC.mapPin = sender as? MapPin
             }
-            
         }
     }
-
 }
 
 

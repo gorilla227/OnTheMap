@@ -24,7 +24,10 @@ class MainTabBarVC: UITabBarController {
         view.addSubview(activityIndicator)
         
         // Request StudentLocations
-        let parameters = [ParseAPI.Constants.ParameterKeys.Order: "-" + StudentLocation.ObjectKeys.UpdatedAt]
+        let parameters: [String: AnyObject] = [
+            ParseAPI.Constants.ParameterKeys.Order: "-" + StudentLocation.ObjectKeys.UpdatedAt,
+            ParseAPI.Constants.ParameterKeys.Limit: "100"
+        ]
         requestStudentLocations(parameters)
     }
     
@@ -39,6 +42,7 @@ class MainTabBarVC: UITabBarController {
     }
     
     private func requestStudentLocations(parameters: [String: AnyObject]?) {
+        activityIndicator.startAnimating()
         parse.getStudentLocations(parameters) { (result, error) in
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
@@ -51,6 +55,7 @@ class MainTabBarVC: UITabBarController {
     }
     
     private func queryMyLocation() {
+        activityIndicator.startAnimating()
         parse.queryStudentLocation(udacity.accountID!) { (result, error) in
             guard error == nil else {
                 print(error?.domain, error?.localizedDescription)
@@ -60,6 +65,9 @@ class MainTabBarVC: UITabBarController {
             
             self.removeMyLocationFromList()
             self.loadMapPinsForSubViewControllers()
+            performUIUpdatesOnMain({ 
+                self.activityIndicator.stopAnimating()
+            })
         }
     }
     
@@ -127,7 +135,10 @@ class MainTabBarVC: UITabBarController {
     }
     
     @IBAction func refreshMapPinsButtonOnClicked(sender: AnyObject) {
-        let parameters = [ParseAPI.Constants.ParameterKeys.Order: "-" + StudentLocation.ObjectKeys.UpdatedAt]
+        let parameters: [String: AnyObject] = [
+            ParseAPI.Constants.ParameterKeys.Order: "-" + StudentLocation.ObjectKeys.UpdatedAt,
+            ParseAPI.Constants.ParameterKeys.Limit: "100"
+        ]
         requestStudentLocations(parameters)
     }
 
