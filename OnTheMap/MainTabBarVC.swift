@@ -15,6 +15,7 @@ class MainTabBarVC: UITabBarController {
 
     let udacity = UdacityAPI.sharedInstance()
     let parse = ParseAPI.sharedInstance()
+    let locationData = LocationData.sharedInstance()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +51,7 @@ class MainTabBarVC: UITabBarController {
                 return
             }
             
+            self.locationData.studentLocations = result
             self.queryMyLocation()
         }
     }
@@ -63,6 +65,7 @@ class MainTabBarVC: UITabBarController {
                 return
             }
             
+            self.locationData.myLocation = result
             self.removeMyLocationFromList()
             self.loadMapPinsForSubViewControllers()
             performUIUpdatesOnMain({ 
@@ -80,7 +83,7 @@ class MainTabBarVC: UITabBarController {
     }
     
     private func removeMyLocationFromList() {
-        if let myLocation = parse.myLocation, var studentLocations = parse.studentLocations {
+        if let myLocation = locationData.myLocation, var studentLocations = locationData.studentLocations {
             for location in studentLocations {
                 if location == myLocation {
                     studentLocations.removeAtIndex(studentLocations.indexOf(location)!)
@@ -113,8 +116,8 @@ class MainTabBarVC: UITabBarController {
     @IBAction func myPinButtonOnClicked(sender: AnyObject) {
         let SegueIdentifier = "CreateMyPin"
         
-        print(parse.myLocation)
-        if parse.myLocation == nil {
+        print(locationData.myLocation)
+        if locationData.myLocation == nil {
             // Add myPin
             performSegueWithIdentifier(SegueIdentifier, sender: self)
         } else {

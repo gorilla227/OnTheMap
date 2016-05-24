@@ -11,6 +11,7 @@ import UIKit
 class ListVC: UITableViewController {
 
     let parse = ParseAPI.sharedInstance()
+    let locationData = LocationData.sharedInstance()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +26,7 @@ class ListVC: UITableViewController {
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if let studentLocations = parse.studentLocations {
+        if let studentLocations = locationData.studentLocations {
             return studentLocations.count
         } else {
             return 0
@@ -37,7 +38,7 @@ class ListVC: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier, forIndexPath: indexPath)
 
         // Configure the cell...
-        let cellData = parse.studentLocations![indexPath.row]
+        let cellData = locationData.studentLocations![indexPath.row]
         let name = cellData.firstName + " " + cellData.lastName
 
         cell.textLabel?.text = name
@@ -60,7 +61,7 @@ class ListVC: UITableViewController {
         }
         */
         
-        let selectedStudentLocation = parse.studentLocations![indexPath.row]
+        let selectedStudentLocation = locationData.studentLocations![indexPath.row]
         if var mediaURLString = selectedStudentLocation.mediaURL {
             if !mediaURLString.hasPrefix("http") {
                 mediaURLString = "http://" + mediaURLString

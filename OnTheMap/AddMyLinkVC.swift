@@ -21,6 +21,7 @@ class AddMyLinkVC: UIViewController {
     var mapPin: MapPin?
     let udacity = UdacityAPI.sharedInstance()
     let parse = ParseAPI.sharedInstance()
+    let locationData = LocationData.sharedInstance()
 
     // MARK: Functions
     override func viewDidLoad() {
@@ -96,15 +97,16 @@ class AddMyLinkVC: UIViewController {
         print("Submit Parameters: \(parameters)")
         
         stopInteraction(true, runInBackground: false, completionHandler: nil)
-        if parse.myLocation != nil {
+        if let location = locationData.myLocation {
             // Update Student Location
-            parse.updateStudentLocation(parameters, completionHandler: { (success, error) in
-                guard error == nil && success else {
+            parse.updateStudentLocation(location, parameters: parameters, completionHandler: { (result, error) in
+                guard error == nil else {
                     print("Updated My Location error: \(error?.domain), \(error?.localizedDescription)")
                     self.showAlert(error)
                     return
                 }
                 
+                self.locationData.myLocation = result
                 self.stopInteraction(false, runInBackground: true, completionHandler: {
                     NSNotificationCenter.defaultCenter().postNotificationName(MapPin.LocationAddedUpdatedNotification, object: nil)
                     self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
@@ -113,13 +115,14 @@ class AddMyLinkVC: UIViewController {
             })
         } else {
             // Add Student Location
-            parse.addStudentLocation(parameters) { (success, error) in
-                guard error == nil && success else {
+            parse.addStudentLocation(parameters) { (result, error) in
+                guard error == nil else {
                     print("Added My Location error: \(error?.domain), \(error?.localizedDescription)")
                     self.showAlert(error)
                     return
                 }
                 
+                self.locationData.myLocation = result
                 self.stopInteraction(false, runInBackground: true, completionHandler: {
                     NSNotificationCenter.defaultCenter().postNotificationName(MapPin.LocationAddedUpdatedNotification, object: nil)
                     self.navigationController?.dismissViewControllerAnimated(true, completion: nil)

@@ -22,6 +22,7 @@
 		B21120D51CE3D83F0072E9C5 /* SquareTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120D41CE3D83F0072E9C5 /* SquareTextField.swift */; };
 		B21120D81CE3E2260072E9C5 /* UdacityAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120D71CE3E2260072E9C5 /* UdacityAPI.swift */; };
 		B21120DC1CE3E2640072E9C5 /* UdacityConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */; };
+		B29921DB1CF507680023A936 /* LocationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29921DA1CF507680023A936 /* LocationData.swift */; };
 		B2B0CB4A1CE646E8005EA3AB /* StudentLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B0CB491CE646E8005EA3AB /* StudentLocation.swift */; };
 		B2B0CB4C1CE65FB2005EA3AB /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B0CB4B1CE65FB2005EA3AB /* MapPin.swift */; };
 		B2D17C751CEA43810086F3FD /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2D17C731CEA43810086F3FD /* FBSDKCoreKit.framework */; };
@@ -72,6 +73,7 @@
 		B21120D41CE3D83F0072E9C5 /* SquareTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SquareTextField.swift; path = CustomizeUI/SquareTextField.swift; sourceTree = "<group>"; };
 		B21120D71CE3E2260072E9C5 /* UdacityAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityAPI.swift; sourceTree = "<group>"; };
 		B21120DB1CE3E2640072E9C5 /* UdacityConstant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityConstant.swift; sourceTree = "<group>"; };
+		B29921DA1CF507680023A936 /* LocationData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationData.swift; sourceTree = "<group>"; };
 		B2B0CB491CE646E8005EA3AB /* StudentLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentLocation.swift; sourceTree = "<group>"; };
 		B2B0CB4B1CE65FB2005EA3AB /* MapPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
 		B2D17C731CEA43810086F3FD /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = FaceBookSDK/FBSDKCoreKit.framework; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				B2E091531CE5596E004254AE /* ParseAPI.swift */,
 				B2E091541CE5596E004254AE /* ParseConstant.swift */,
 				B2B0CB491CE646E8005EA3AB /* StudentLocation.swift */,
+				B29921DA1CF507680023A936 /* LocationData.swift */,
 			);
 			name = Parse;
 			sourceTree = "<group>";
@@ -365,6 +368,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B29921DB1CF507680023A936 /* LocationData.swift in Sources */,
 				B2B0CB4C1CE65FB2005EA3AB /* MapPin.swift in Sources */,
 				B21120D81CE3E2260072E9C5 /* UdacityAPI.swift in Sources */,
 				A1D6E48C1CE8564600117697 /* AddMyLinkVC.swift in Sources */,

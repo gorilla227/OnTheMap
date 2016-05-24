@@ -14,6 +14,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     
     let parse = ParseAPI.sharedInstance()
+    let locationData = LocationData.sharedInstance()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +36,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
     func loadMapPin() {
         cleanMapPins()
         // Add new return annotations
-        for studentLocation in parse.studentLocations! {
+        for studentLocation in locationData.studentLocations! {
             performUIUpdatesOnMain({
                 let annotation = MapPin(rawData: studentLocation)
                 self.mapView.addAnnotation(annotation)
@@ -43,7 +44,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
         }
         
         // Add User's annotation
-        if let myLocation = parse.myLocation {
+        if let myLocation = locationData.myLocation {
             performUIUpdatesOnMain({ 
                 let annotation = MapPin(rawData: myLocation)
                 self.mapView.addAnnotation(annotation)
@@ -53,7 +54,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
     }
     
     func reloadMyLocation() {
-        if let myLocation = parse.myLocation {
+        if let myLocation = locationData.myLocation {
             for annotation in mapView.annotations {
                 if let mapPin = annotation as? MapPin {
                     if mapPin.studentLocation == myLocation {
